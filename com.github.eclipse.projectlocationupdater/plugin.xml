@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.ui.propertyPages">
+      <page name="Resource Location Updater"
+            class="com.github.eclipse.projectlocationupdater.properties.ProjectLocationUpdaterPropertyPage"
+            id="com.github.eclipse.projectlocationupdater.properties.projectLocationUpdaterPropertyPage">
+         <enabledWhen>
+            <instanceof value="org.eclipse.core.resources.IResource"></instanceof>
+         </enabledWhen>
+      </page>
+   </extension>
+</plugin>
