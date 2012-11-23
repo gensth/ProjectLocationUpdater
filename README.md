@@ -21,14 +21,14 @@ Install from
 
 ## Usage
 
-- Open the properties of the closed project.
-- Select `Resource Location Updater` page.
-- Update the project location path.
-- Reopen the project to apply the changes.
+* Open the properties of the closed project.
+* Select `Resource Location Updater` page.
+* Update the project location path.
+* Reopen the project to apply the changes.
 
 ## Screenshot
 
-!https://raw.github.com/gensth/ProjectLocationUpdater/master/ProjectLocationUpdater_screenshot.png!
+![screenshot](../raw/master/ProjectLocationUpdater_screenshot.png "preference page of ProjectLocationUpdater")
 
 ## License
 
@@ -36,5 +36,5 @@ ProjectLocationUpdater is released under the Eclipse Puglic License 1.0. http://
 
 ## Related websites
 
-- [Stackoverflow: Eclipse change project files location](http://stackoverflow.com/questions/1430836/eclipse-change-project-files-location)
-- [Moving a Flex Builder/Eclipse Workspace Without Importing Anything](http://www.joeflash.ca/blog/2008/11/moving-a-fb-workspace-update.html)
+* [Stackoverflow: Eclipse change project files location](http://stackoverflow.com/questions/1430836/eclipse-change-project-files-location)
+* [Moving a Flex Builder/Eclipse Workspace Without Importing Anything](http://www.joeflash.ca/blog/2008/11/moving-a-fb-workspace-update.html)
