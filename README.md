@@ -28,7 +28,7 @@ Install from
 
 ## Screenshot
 
-![screenshot](../raw/master/ProjectLocationUpdater_screenshot.png "preference page of ProjectLocationUpdater")
+![screenshot](raw/master/ProjectLocationUpdater_screenshot.png "preference page of ProjectLocationUpdater")
 
 ## License
 
