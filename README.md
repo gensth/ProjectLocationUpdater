@@ -15,10 +15,9 @@ This property page addresses this issue and allows you to change the location pa
 
 ## Installation
 
-Install from the Eclipse Marketplace
-    http://marketplace.eclipse.org/node/539811
-or from the update site
-    http://www.gensthaler.de/eclipse/
+Install from
+* the Eclipse Marketplace: http://marketplace.eclipse.org/node/539811
+* or from the update site: http://www.gensthaler.de/eclipse/
 
 ## Usage
 
@@ -29,7 +28,7 @@ or from the update site
 
 ## Screenshot
 
-!ProjectLocationUpdater_screenshot.png!
+!https://raw.github.com/gensth/ProjectLocationUpdater/master/ProjectLocationUpdater_screenshot.png!
 
 ## License
 
