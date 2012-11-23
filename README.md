@@ -13,12 +13,23 @@ Some projects depend on external build tools. In consequence they require the wo
 If such a project has been imported into the workspace and is not located in a subfolder of the workspace, the project locations are stored in the runtime data as absolute path. There is no built in mechanism to change that path.
 This property page addresses this issue and allows you to change the location path of the closed project.
 
+## Installation
+
+Install from the Eclipse Marketplace
+    http://marketplace.eclipse.org/node/539811
+or from the update site
+    http://www.gensthaler.de/eclipse/
+
 ## Usage
 
 - Open the properties of the closed project.
 - Select `Resource Location Updater` page.
 - Update the project location path.
 - Reopen the project to apply the changes.
+
+## Screenshot
+
+!ProjectLocationUpdater_screenshot.png!
 
 ## License
 
