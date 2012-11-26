@@ -2,7 +2,7 @@
 
 This Eclipse plugin adds a property page to update the project location by editing the `.location` file in your workspace.
 
-## Usecase
+## Use case
 
 Correct the locations for projects moved in the file system without using the Eclipse refactoring `move` tool.
 Alternatively such projects could be deleted and reimported into the workspace. During this process some other project settings are altered which may not be intended.
@@ -32,7 +32,7 @@ Install from
 
 ## License
 
-ProjectLocationUpdater is released under the Eclipse Puglic License 1.0. http://www.eclipse.org/legal/epl-v10.html
+ProjectLocationUpdater is released under the Eclipse Public License 1.0. http://www.eclipse.org/legal/epl-v10.html
 
 ## Related websites
 
