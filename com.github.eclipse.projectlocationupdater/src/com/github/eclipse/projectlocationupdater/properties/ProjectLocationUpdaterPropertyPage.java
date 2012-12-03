@@ -205,7 +205,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 			int numRefs = in.readInt();
 			referenceNames = new String[numRefs];
 			for (int i = 0; i < numRefs; i++) {
-				referenceNames[i] = in.readUTF();
+				referenceNames[i] = in.readUTF();//
 			}
 			in.read(new byte[ILocalStoreConstants.END_CHUNK.length]);
 		} finally {
