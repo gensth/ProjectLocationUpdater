@@ -1,0 +1,2 @@
+1.0.1 bugfixes: updating location of project which references to other projects (credits to michud), compiler version
+1.0.0 initial release
