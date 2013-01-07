@@ -79,8 +79,13 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 			in.read(new byte[ILocalStoreConstants.BEGIN_CHUNK.length]);
 
 			String projectLocationStr = in.readUTF();
-			assert projectLocationStr.startsWith(FILE_URI_PREFIX);
-			projectLocationStr = projectLocationStr.substring(FILE_URI_PREFIX.length());
+			if (projectLocationStr.startsWith(FILE_URI_PREFIX)) {
+				projectLocationStr = projectLocationStr.substring(FILE_URI_PREFIX.length());
+				if (systemIsWindows() && projectLocationStr.matches("^/[a-zA-Z]:")) {
+					// remove trailing "/" from absolute path on windows
+					projectLocationStr = projectLocationStr.substring(1);
+				}
+			}
 
 			return projectLocationStr;
 		} finally {
@@ -109,18 +114,19 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 
 	private void addSeparatorLabel(Composite composite) {
 		Label separatorLabel = new Label(composite, SWT.NONE); // separator label
-		separatorLabel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+		separatorLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 	}
 
 	private void addUsage(Composite composite) {
 		Label usageLabel = new Label(composite, SWT.NONE);
-		usageLabel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+		usageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
+		usageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		usageLabel.setText(USAGE);
 	}
 
 	private void addProjectOpenWarning(Composite composite) {
 		Label warningLabel = new Label(composite, SWT.NONE);
-		warningLabel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+		warningLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 		// warningLabel.setImage(JFaceResources.getImageRegistry().getDescriptor("org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING").createImage());
 		warningLabel.setText(PROJECT_OPEN_WARNING);
 	}
@@ -135,8 +141,10 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 		} catch (IOException e) {
 			currentLocation = ((IResource) getElement()).getProject().getLocation().toString();
 		}
-		currentLocationText = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
-		currentLocationText.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+		currentLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		gd.widthHint = 40;
+		currentLocationText.setLayoutData(gd);
 		currentLocationText.setText(currentLocation);
 	}
 
@@ -145,7 +153,9 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 		newLocationLabel.setText(NEW_LOCATION);
 
 		newLocationText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		newLocationText.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 1, 1));
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd.widthHint = 40;
+		newLocationText.setLayoutData(gd);
 		newLocationText.setText(currentLocationText.getText());
 
 		final String workspaceLocation = ((IResource) getElement()).getWorkspace().getRoot().getLocation().toString();
@@ -214,7 +224,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 			}
 		}
 
-		if (locationFile.isHidden() && System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (locationFile.isHidden() && systemIsWindows()) {
 			// On windows the locationFile might be hidden
 			Runtime.getRuntime().exec("attrib -H \"" + locationFile.getAbsolutePath() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -234,5 +244,9 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 				out.close();
 			}
 		}
+	}
+
+	private static boolean systemIsWindows() {
+		return System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
