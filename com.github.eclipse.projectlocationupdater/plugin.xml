@@ -4,7 +4,7 @@
    <extension point="org.eclipse.ui.propertyPages">
       <page objectClass="org.eclipse.core.resources.IResource"
       		adaptable="true"
-      		name="Project Location Updater"
+      		name="Resource Location Updater"
             class="com.github.eclipse.projectlocationupdater.properties.ProjectLocationUpdaterPropertyPage"
             id="com.github.eclipse.projectlocationupdater.properties.projectLocationUpdaterPropertyPage">
       </page>
