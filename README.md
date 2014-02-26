@@ -28,7 +28,7 @@ Install from
 
 ## Screenshot
 
-![screenshot](/gensth/ProjectLocationUpdater/raw/master/ProjectLocationUpdater_screenshot.png "preference page of ProjectLocationUpdater")
+![screenshot](blob/master/ProjectLocationUpdater_screenshot.png "preference page of ProjectLocationUpdater")
 
 ## License
 
