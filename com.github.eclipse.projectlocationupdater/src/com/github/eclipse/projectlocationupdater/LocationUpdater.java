@@ -98,6 +98,21 @@ public class LocationUpdater {
 	}
 
 	/**
+	 * Reads the content of a project location file
+	 * 
+	 * @param aProject
+	 *            Project to locate
+	 * @return The value of the project location
+	 * @throws IOException
+	 *             Error reading the location file
+	 */
+	public String readProjectLocation(final IProject aProject)
+			throws IOException {
+
+		return readProjectLocation(getProjectLocationFilePath(aProject));
+	}
+
+	/**
 	 * Checks if we're running on Windows
 	 * 
 	 * @return True if the OS name contains "windows"
