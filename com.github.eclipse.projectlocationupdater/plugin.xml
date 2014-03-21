@@ -9,4 +9,21 @@
             id="com.github.eclipse.projectlocationupdater.properties.projectLocationUpdaterPropertyPage">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="com.github.eclipse.projectlocationupdater.batchUpdate"
+            nameFilter="*"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="com.github.eclipse.projectlocationupdater.actions.BatchUpdateAction"
+               enablesFor="*"
+               id="com.github.eclipse.projectlocationupdater.updateLocations"
+               label="Update Locations"
+               menubarPath="additions"
+               tooltip="Change project(s) location">
+         </action>
+      </objectContribution>
+   </extension>
 </plugin>
