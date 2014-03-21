@@ -48,7 +48,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 *            Projects that will be configured
 	 */
 	public LocationUpdateDialog(final Shell aParentShell,
-			final Collection<IProject> aProjects) {
+			final Collection<IProject> aProjects, final String aCommonPath) {
 
 		super(aParentShell);
 
@@ -58,9 +58,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 		// Copy the projects list
 		pProjects = new LinkedList<IProject>(aProjects);
-
-		// TODO: Compute the common path part
-		pCommonPath = "toto";
+		pCommonPath = aCommonPath;
 	}
 
 	/**
@@ -200,13 +198,11 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Returns a couple of Strings: the common part of the current path to be
-	 * replaced and its replacement
+	 * Returns the new location chosen by the user
 	 * 
-	 * @return A 2-elements array
+	 * @return The new location
 	 */
-	public String[] getPathModification() {
-
-		return new String[] { pCommonPath, pNewPathText.getText() };
+	public String getNewLocation() {
+		return pNewPathText.getText();
 	}
 }
