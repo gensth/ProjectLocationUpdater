@@ -30,7 +30,10 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	/** Current common path part (read only) */
 	private final String pCommonPath;
 
-	/** New common path part */
+	/** New common path value */
+	private String pNewPathString;
+
+	/** New common path text field */
 	private Text pNewPathText;
 
 	/** The modified project */
@@ -51,6 +54,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 			final Collection<IProject> aProjects, final String aCommonPath) {
 
 		super(aParentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 
 		// Get the workspace root
 		pWorkspaceRoot = aProjects.iterator().next().getWorkspace().getRoot()
@@ -111,7 +115,9 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 						.getShell(), SWT.OPEN);
 				dd.setFilterPath(pWorkspaceRoot);
 				final String selected = dd.open();
-				pNewPathText.setText(selected);
+				if (selected != null) {
+					pNewPathText.setText(selected);
+				}
 			}
 		});
 	}
@@ -194,7 +200,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 		// New path
 		addNewLocation(composite);
-		return composite;
+		return dialogArea;
 	}
 
 	/**
@@ -203,6 +209,14 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 * @return The new location
 	 */
 	public String getNewLocation() {
-		return pNewPathText.getText();
+		return pNewPathString;
+	}
+
+	@Override
+	protected void okPressed() {
+
+		// Store the field content, while it is not disposed
+		pNewPathString = pNewPathText.getText();
+		super.okPressed();
 	}
 }

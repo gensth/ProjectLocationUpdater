@@ -126,15 +126,15 @@ public class LocationUpdater {
 	 * 
 	 * @param aProject
 	 *            Project to be updated
-	 * @param aToReplace
-	 *            String part to be replaced
-	 * @param aReplacement
-	 *            Replacement string
+	 * @param aPreviousPrefix
+	 *            Prefix path to be replaced
+	 * @param aNewPrefix
+	 *            Replacement path
 	 * @throws IOException
 	 *             Error reading or writing the project location file
 	 */
 	public void updateLocationSubstring(final IProject aProject,
-			final String aToReplace, final String aReplacement)
+			final String aPreviousPrefix, final String aNewPrefix)
 			throws IOException {
 
 		// Read the current location
@@ -142,8 +142,8 @@ public class LocationUpdater {
 		final String currentLocation = readProjectLocation(locationFilePath);
 
 		// Replace the substring
-		final String newLocation = currentLocation.replace(aToReplace,
-				aReplacement);
+		final String newLocation = currentLocation.replace(aPreviousPrefix,
+				aNewPrefix);
 
 		// Make a URI from the new path string
 		final URI newLocationURI = new Path(newLocation).toFile().toURI();

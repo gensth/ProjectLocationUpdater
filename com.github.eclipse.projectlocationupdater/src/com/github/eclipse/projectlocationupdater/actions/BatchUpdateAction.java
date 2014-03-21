@@ -1,12 +1,17 @@
 package com.github.eclipse.projectlocationupdater.actions;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,18 +30,83 @@ import com.github.eclipse.projectlocationupdater.LocationUpdater;
  */
 public class BatchUpdateAction implements IObjectActionDelegate {
 
+	/** The location updater */
+	private final LocationUpdater pLocationUpdater = new LocationUpdater();
+
 	/** Current selection */
 	private ISelection pSelection;
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the common part of the locations of the given projects
 	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 * @param aProjects
+	 *            A list of closed projects to relocate
+	 * @return THe common part of the path to projects (or an empty string)
 	 */
-	@Override
-	public void run(final IAction aAction) {
+	private String getCommonPath(final Collection<IProject> aProjects) {
 
-		// Prepare selection list
+		if (aProjects.size() == 1) {
+			// Only one element...
+			try {
+				return pLocationUpdater.readProjectLocation(aProjects
+						.iterator().next());
+			} catch (final IOException e) {
+				// TODO Log it
+				e.printStackTrace();
+				return "";
+			}
+		}
+
+		// Make an array of projects names
+		final Collection<String> projectLocations = new LinkedList<String>();
+		for (final IProject project : aProjects) {
+			try {
+				projectLocations.add(pLocationUpdater
+						.readProjectLocation(project));
+			} catch (final IOException e) {
+				// TODO Log it
+				e.printStackTrace();
+			}
+		}
+
+		// Sort it
+		final String[] locationsStr = projectLocations.toArray(new String[0]);
+		Arrays.sort(locationsStr);
+
+		// Common part can be determined by first and last elements of the array
+		return getCommonPathPrefix(locationsStr[0],
+				locationsStr[locationsStr.length - 1]);
+	}
+
+	/**
+	 * Returns the longest common part of the given two strings
+	 * 
+	 * @param aString
+	 *            A string
+	 * @param aOther
+	 *            Another string
+	 * @return The common part of the strings
+	 */
+	private String getCommonPathPrefix(final String aString, final String aOther) {
+
+		// Compute the common part
+		final IPath path = new Path(aString);
+		final IPath otherPath = new Path(aOther);
+		final int matchingSegments = path.matchingFirstSegments(otherPath);
+
+		// Make the common path
+		return path.removeLastSegments(path.segmentCount() - matchingSegments)
+				.toString();
+	}
+
+	/**
+	 * Computes the list of the projects to update. They must be closed to be
+	 * selected.
+	 * 
+	 * @return The projects to update
+	 */
+	private Collection<IProject> getSelectedProjects() {
+
 		final Set<IProject> selectedProjects = new LinkedHashSet<IProject>();
 		if (pSelection instanceof IStructuredSelection) {
 			for (final Iterator<?> it = ((IStructuredSelection) pSelection)
@@ -62,8 +132,30 @@ public class BatchUpdateAction implements IObjectActionDelegate {
 			}
 		}
 
+		return selectedProjects;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	@Override
+	public void run(final IAction aAction) {
+
+		// Prepare selection list
+		final Collection<IProject> selectedProjects = getSelectedProjects();
 		if (selectedProjects.isEmpty()) {
 			// No valid project found, do nothing
+			// TODO: log/trace it
+			return;
+		}
+
+		// Compute the common path part
+		final String commonPath = getCommonPath(selectedProjects);
+		if (commonPath.isEmpty()) {
+			// No common path
+			// TODO: open a dialog and log it
 			return;
 		}
 
@@ -72,22 +164,24 @@ public class BatchUpdateAction implements IObjectActionDelegate {
 				.getActiveWorkbenchWindow().getShell();
 
 		final LocationUpdateDialog dialog = new LocationUpdateDialog(shell,
-				selectedProjects);
+				selectedProjects, commonPath);
 		if (dialog.open() != Window.OK) {
 			// User click CANCEL: do nothing
 			return;
 		}
 
 		// Get the common part and the new path
-		final String[] results = dialog.getPathModification();
-		final String commonPart = results[0];
-		final String newPath = results[1];
+		final String newPath = dialog.getNewLocation();
+		if (newPath.equals(commonPath)) {
+			// Nothing to do
+			return;
+		}
 
 		// Update project
-		final LocationUpdater updater = new LocationUpdater();
 		for (final IProject project : selectedProjects) {
 			try {
-				updater.updateLocationSubstring(project, commonPart, newPath);
+				pLocationUpdater.updateLocationSubstring(project, commonPath,
+						newPath);
 
 			} catch (final IOException ex) {
 				// TODO Use a logger
