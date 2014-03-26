@@ -32,6 +32,9 @@ public class LocationUpdater {
 
 	/** Constant path to the workspace projects locations storage. */
 	private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(".metadata/.plugins/org.eclipse.core.resources/.projects");
+	
+	/** <code>true</code> if we're running on Windows, else <code>false</code>. */
+	private static final boolean OS_IS_WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
 
 	/**
 	 * Retrieves the path to the .location file of a project in its workspace.
@@ -70,7 +73,7 @@ public class LocationUpdater {
 			String projectLocationStr = in.readUTF();
 			if (projectLocationStr.startsWith(FILE_URI_PREFIX)) {
 				projectLocationStr = projectLocationStr.substring(FILE_URI_PREFIX.length());
-				if (systemIsWindows() && projectLocationStr.matches("^/[a-zA-Z]:")) {
+				if (OS_IS_WINDOWS && projectLocationStr.matches("^/[a-zA-Z]:")) {
 					// remove trailing "/" from absolute path on windows
 					projectLocationStr = projectLocationStr.substring(1);
 				}
@@ -96,16 +99,6 @@ public class LocationUpdater {
 	 */
 	public String readProjectLocation(final IProject aProject) throws IOException {
 		return readProjectLocation(getProjectLocationFilePath(aProject));
-	}
-
-	/**
-	 * Checks if we're running on Windows.
-	 * 
-	 * @return <code>true</code> if the OS name contains "windows", else
-	 *         <code>false</code>
-	 */
-	private static boolean systemIsWindows() {
-		return System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
 	}
 
 	/**
