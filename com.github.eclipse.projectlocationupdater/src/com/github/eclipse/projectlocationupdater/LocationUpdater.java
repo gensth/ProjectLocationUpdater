@@ -3,10 +3,8 @@ package com.github.eclipse.projectlocationupdater;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 
 import org.eclipse.core.internal.localstore.ILocalStoreConstants;
 import org.eclipse.core.resources.IProject;
@@ -32,54 +30,55 @@ public class LocationUpdater {
 
 	/** Constant path to the workspace projects locations storage. */
 	private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(".metadata/.plugins/org.eclipse.core.resources/.projects");
-	
+
 	/** <code>true</code> if we're running on Windows, else <code>false</code>. */
 	private static final boolean OS_IS_WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
 
 	/**
 	 * Retrieves the path to the .location file of a project in its workspace.
 	 * 
-	 * @param aProject
-	 *            Any project.
-	 * @return An IPath to its .location file.
+	 * @param project
+	 *            Any project
+	 * @return An IPath to its .location file
 	 */
-	private IPath getProjectLocationFilePath(final IProject aProject) {
+	private IPath getProjectLocationFile(final IProject project) {
 		// Get the workspace root path
-		final IPath workspaceLocation = aProject.getWorkspace().getRoot().getLocation();
+		final IPath workspaceLocation = project.getWorkspace().getRoot().getLocation();
 
 		// Forge the location file name
-		return workspaceLocation.append(WORKSPACE_PROJECT_SETTINGS_RELPATH).append(aProject.getName()).append(".location");
+		return workspaceLocation.append(WORKSPACE_PROJECT_SETTINGS_RELPATH)
+				.append(project.getName()).append(".location");
 	}
 
 	/**
 	 * Reads the content of a project location file.
 	 * 
-	 * @param aLocationPath
+	 * @param projectLocationFile
 	 *            Path to a project location file
 	 * @return The value of the project location
 	 * @throws IOException
 	 *             Error reading the location file
 	 */
-	private String readProjectLocation(final IPath aLocationPath) throws IOException {
+	private String readProjectLocation(final IPath projectLocationFile) throws IOException {
 		DataInputStream in = null;
 		try {
 			// Read the location file
-			in = new DataInputStream(new FileInputStream(aLocationPath.toFile()));
+			in = new DataInputStream(new FileInputStream(projectLocationFile.toFile()));
 
 			// Ignore the begin chunk
 			in.skipBytes(ILocalStoreConstants.BEGIN_CHUNK.length);
 
 			// Parse the location
-			String projectLocationStr = in.readUTF();
-			if (projectLocationStr.startsWith(FILE_URI_PREFIX)) {
-				projectLocationStr = projectLocationStr.substring(FILE_URI_PREFIX.length());
-				if (OS_IS_WINDOWS && projectLocationStr.matches("^/[a-zA-Z]:")) {
+			String projectLocation = in.readUTF();
+			if (projectLocation.startsWith(FILE_URI_PREFIX)) {
+				projectLocation = projectLocation.substring(FILE_URI_PREFIX.length());
+				if (OS_IS_WINDOWS && projectLocation.matches("^/[a-zA-Z]:")) {
 					// remove trailing "/" from absolute path on windows
-					projectLocationStr = projectLocationStr.substring(1);
+					projectLocation = projectLocation.substring(1);
 				}
 			}
 
-			return projectLocationStr;
+			return projectLocation;
 		} finally {
 			// Be nice
 			if (in != null) {
@@ -91,63 +90,59 @@ public class LocationUpdater {
 	/**
 	 * Reads the content of a project location file.
 	 * 
-	 * @param aProject
+	 * @param project
 	 *            Project to locate
 	 * @return The value of the project location
 	 * @throws IOException
 	 *             Error reading the location file
 	 */
-	public String readProjectLocation(final IProject aProject) throws IOException {
-		return readProjectLocation(getProjectLocationFilePath(aProject));
+	public String readProjectLocation(final IProject project) throws IOException {
+		IPath projectLocationFile = getProjectLocationFile(project);
+		return readProjectLocation(projectLocationFile);
 	}
 
 	/**
 	 * Updates a substring of the location.
 	 * 
-	 * @param aProject
+	 * @param project
 	 *            Project to be updated
-	 * @param aPreviousPrefix
+	 * @param previousPrefix
 	 *            Prefix path to be replaced
-	 * @param aNewPrefix
+	 * @param newPrefix
 	 *            Replacement path
 	 * @throws IOException
 	 *             Error reading or writing the project location file
 	 */
-	public void updateLocationSubstring(final IProject aProject, final String aPreviousPrefix, final String aNewPrefix) throws IOException {
+	public void updateLocationSubstring(final IProject project, final String previousPrefix, final String newPrefix) throws IOException {
 		// Read the current location
-		final IPath locationFilePath = getProjectLocationFilePath(aProject);
-		final String currentLocation = readProjectLocation(locationFilePath);
+		final IPath projectLocationFile = getProjectLocationFile(project);
+		final String currentLocation = readProjectLocation(projectLocationFile);
 
 		// Replace the substring
-		final String newLocation = currentLocation.replace(aPreviousPrefix, aNewPrefix);
-
-		// Make a URI from the new path string
-		final URI newLocationURI = new Path(newLocation).toFile().toURI();
+		final String newLocation = currentLocation.replace(previousPrefix, newPrefix);
 
 		// Store the new location
-		writeProjectLocation(locationFilePath, newLocationURI);
+		writeProjectLocation(projectLocationFile, new Path(newLocation));
 	}
 
 	/**
 	 * Writes the content of a project location file.
 	 * 
-	 * @param aLocationFilePath
+	 * @param projectLocationFile
 	 *            Path to the project .location file
-	 * @param aLocationURI
-	 *            URI to the project itself
-	 * @throws FileNotFoundException .location
-	 *             file not found
+	 * @param newLocation
+	 *            The new path to the project
 	 * @throws IOException
 	 *             Error reading or writing the location file
 	 */
-	private void writeProjectLocation(final IPath aLocationFilePath, final URI aLocationURI) throws FileNotFoundException, IOException {
+	private void writeProjectLocation(final IPath projectLocationFile, final IPath newLocation) throws IOException {
 		// Keep existing data
 		String[] referenceNames;
 
 		// Read the existing file
 		DataInputStream in = null;
 		try {
-			in = new DataInputStream(new FileInputStream(aLocationFilePath.toFile()));
+			in = new DataInputStream(new FileInputStream(projectLocationFile.toFile()));
 
 			// Ignore the begin chunk
 			in.skipBytes(ILocalStoreConstants.BEGIN_CHUNK.length);
@@ -175,13 +170,13 @@ public class LocationUpdater {
 		// Write the new content
 		DataOutputStream out = null;
 		try {
-			out = new DataOutputStream(new FileOutputStream(aLocationFilePath.toFile()));
+			out = new DataOutputStream(new FileOutputStream(projectLocationFile.toFile()));
 
 			// Write the begin chunk
 			out.write(ILocalStoreConstants.BEGIN_CHUNK);
 
 			// Write the new location
-			out.writeUTF(URI_PREFIX + aLocationURI.toString());
+			out.writeUTF(URI_PREFIX + newLocation.toFile().toURI().toString());
 
 			// Write references
 			out.writeInt(referenceNames.length);
