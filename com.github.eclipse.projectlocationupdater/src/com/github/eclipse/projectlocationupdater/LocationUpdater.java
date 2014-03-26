@@ -23,13 +23,13 @@ import org.eclipse.core.runtime.Path;
 @SuppressWarnings("restriction")
 public class LocationUpdater {
 	/** URI prefix in location file. */
-	private static final String URI_PREFIX = "URI//";
+    private static final String URI_PREFIX = "URI//"; //$NON-NLS-1$
 
 	/** URI prefix and file protocol prefix. */
-	private static final String FILE_URI_PREFIX = URI_PREFIX + "file:";
+    private static final String FILE_URI_PREFIX = URI_PREFIX + "file:"; //$NON-NLS-1$
 
 	/** Constant path to the workspace projects locations storage. */
-	private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(".metadata/.plugins/org.eclipse.core.resources/.projects");
+    private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(".metadata/.plugins/org.eclipse.core.resources/.projects"); //$NON-NLS-1$
 
 	/** <code>true</code> if we're running on Windows, else <code>false</code>. */
 	private static final boolean OS_IS_WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
@@ -47,7 +47,7 @@ public class LocationUpdater {
 
 		// Forge the location file name
 		return workspaceLocation.append(WORKSPACE_PROJECT_SETTINGS_RELPATH)
-				.append(project.getName()).append(".location");
+                .append(project.getName()).append(".location"); //$NON-NLS-1$
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class LocationUpdater {
 			String projectLocation = in.readUTF();
 			if (projectLocation.startsWith(FILE_URI_PREFIX)) {
 				projectLocation = projectLocation.substring(FILE_URI_PREFIX.length());
-				if (OS_IS_WINDOWS && projectLocation.matches("^/[a-zA-Z]:")) {
+                if (OS_IS_WINDOWS && projectLocation.matches("^/[a-zA-Z]:")) { //$NON-NLS-1$
 					// remove trailing "/" from absolute path on windows
 					projectLocation = projectLocation.substring(1);
 				}
