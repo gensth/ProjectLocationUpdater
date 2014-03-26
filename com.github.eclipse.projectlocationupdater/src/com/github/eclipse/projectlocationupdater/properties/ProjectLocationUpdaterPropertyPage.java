@@ -55,9 +55,6 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 	private Text currentLocationText;
 	private Text newLocationText;
 
-	/**
-	 * Constructor for SamplePropertyPage.
-	 */
 	public ProjectLocationUpdaterPropertyPage() {
 		super();
 	}
@@ -98,6 +95,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
@@ -177,11 +175,13 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 		});
 	}
 
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		newLocationText.setText(currentLocationText.getText());
 	}
 
+	@Override
 	public boolean performOk() {
 		Path currentLocationPath = new Path(currentLocationText.getText());
 		Path newLocationPath = new Path(newLocationText.getText());

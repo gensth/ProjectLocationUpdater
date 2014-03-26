@@ -14,43 +14,42 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Project location updater utility
+ * A utility class to read/write the location of a project.
  * 
  * "restriction" warnings are suppressed: we need do access Eclipse internal
- * constants
+ * constants.
  * 
  * @author Max Gensthaler
  * @author Thomas Calmant
  */
 @SuppressWarnings("restriction")
 public class LocationUpdater {
-	/** URI prefix in location file */
+	/** URI prefix in location file. */
 	private static final String URI_PREFIX = "URI//";
-	
-	/** URI prefix and file protocol prefix */
+
+	/** URI prefix and file protocol prefix. */
 	private static final String FILE_URI_PREFIX = URI_PREFIX + "file:";
 
-	/** Constant path to the workspace projects locations storage */
+	/** Constant path to the workspace projects locations storage. */
 	private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(".metadata/.plugins/org.eclipse.core.resources/.projects");
 
 	/**
-	 * Retrieves the path to the .location file of a project in its workspace
+	 * Retrieves the path to the .location file of a project in its workspace.
 	 * 
 	 * @param aProject
-	 *            Any project
-	 * @return An IPath to its .location file
+	 *            Any project.
+	 * @return An IPath to its .location file.
 	 */
 	public IPath getProjectLocationFilePath(final IProject aProject) {
 		// Get the workspace root path
 		final IPath workspaceLocation = aProject.getWorkspace().getRoot().getLocation();
 
 		// Forge the location file name
-		return workspaceLocation.append(WORKSPACE_PROJECT_SETTINGS_RELPATH)
-				.append(aProject.getName()).append(".location");
+		return workspaceLocation.append(WORKSPACE_PROJECT_SETTINGS_RELPATH).append(aProject.getName()).append(".location");
 	}
 
 	/**
-	 * Reads the content of a project location file
+	 * Reads the content of a project location file.
 	 * 
 	 * @param aLocationPath
 	 *            Path to a project location file
@@ -87,7 +86,7 @@ public class LocationUpdater {
 	}
 
 	/**
-	 * Reads the content of a project location file
+	 * Reads the content of a project location file.
 	 * 
 	 * @param aProject
 	 *            Project to locate
@@ -100,16 +99,17 @@ public class LocationUpdater {
 	}
 
 	/**
-	 * Checks if we're running on Windows
+	 * Checks if we're running on Windows.
 	 * 
-	 * @return True if the OS name contains "windows"
+	 * @return <code>true</code> if the OS name contains "windows", else
+	 *         <code>false</code>
 	 */
 	private boolean systemIsWindows() {
 		return System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
 	}
 
 	/**
-	 * Updates a substring of the location
+	 * Updates a substring of the location.
 	 * 
 	 * @param aProject
 	 *            Project to be updated
@@ -136,7 +136,7 @@ public class LocationUpdater {
 	}
 
 	/**
-	 * Writes the content of a project location file
+	 * Writes the content of a project location file.
 	 * 
 	 * @param aLocationFilePath
 	 *            Path to the project .location file
