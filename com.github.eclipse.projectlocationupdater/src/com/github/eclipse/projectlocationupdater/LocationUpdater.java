@@ -128,6 +128,23 @@ public class LocationUpdater {
         writeProjectLocation(projectLocationFile, newLocation);
     }
 
+    /**
+     * Sets a project location by writing the content of a project location
+     * file.
+     *
+     * @param project
+     *            The project to change the location of
+     * @param newLocation
+     *            The path of the new location
+     * @throws IOException
+     *             Error reading or writing the location file
+     */
+    public void writeProjectLocation(final IProject project, final IPath newLocation) throws IOException {
+        File projectLocationFile = getProjectLocationFile(project).toFile();
+
+        writeProjectLocation(projectLocationFile, newLocation);
+    }
+
 	private void writeProjectLocation(final File projectLocationFile, final IPath newLocation) throws FileNotFoundException, IOException {
 		// Keep existing data
         String[] referenceNames;
