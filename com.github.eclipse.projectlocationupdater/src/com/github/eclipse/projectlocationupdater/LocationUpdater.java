@@ -160,6 +160,11 @@ public class LocationUpdater {
             }
         }
 
+        if (projectLocationFile.isHidden() && OS_IS_WINDOWS) {
+            // On windows the locationFile might be hidden
+            Runtime.getRuntime().exec("attrib -H \"" + projectLocationFile.getAbsolutePath() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
         // Write the new content
         DataOutputStream out = null;
         try {
