@@ -40,7 +40,7 @@ public class LocationUpdater {
 	 *            Any project.
 	 * @return An IPath to its .location file.
 	 */
-	public IPath getProjectLocationFilePath(final IProject aProject) {
+	private IPath getProjectLocationFilePath(final IProject aProject) {
 		// Get the workspace root path
 		final IPath workspaceLocation = aProject.getWorkspace().getRoot().getLocation();
 
@@ -57,7 +57,7 @@ public class LocationUpdater {
 	 * @throws IOException
 	 *             Error reading the location file
 	 */
-	public String readProjectLocation(final IPath aLocationPath) throws IOException {
+	private String readProjectLocation(final IPath aLocationPath) throws IOException {
 		DataInputStream in = null;
 		try {
 			// Read the location file
@@ -104,7 +104,7 @@ public class LocationUpdater {
 	 * @return <code>true</code> if the OS name contains "windows", else
 	 *         <code>false</code>
 	 */
-	private boolean systemIsWindows() {
+	private static boolean systemIsWindows() {
 		return System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
 	}
 
@@ -147,7 +147,7 @@ public class LocationUpdater {
 	 * @throws IOException
 	 *             Error reading or writing the location file
 	 */
-	public void writeProjectLocation(final IPath aLocationFilePath, final URI aLocationURI) throws FileNotFoundException, IOException {
+	private void writeProjectLocation(final IPath aLocationFilePath, final URI aLocationURI) throws FileNotFoundException, IOException {
 		// Keep existing data
 		String[] referenceNames;
 
