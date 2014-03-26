@@ -25,12 +25,12 @@ import org.eclipse.core.runtime.Path;
 @SuppressWarnings("restriction")
 public class LocationUpdater {
 
-	/** URI prefix and file protocol prefix */
-	private static final String FILE_URI_PREFIX = LocationUpdater.URI_PREFIX
-			+ "file:";
-
 	/** URI prefix in location file */
 	private static final String URI_PREFIX = "URI//";
+	
+	/** URI prefix and file protocol prefix */
+	private static final String FILE_URI_PREFIX = URI_PREFIX
+			+ "file:";
 
 	/** Constant path to the workspace projects locations storage */
 	private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(
