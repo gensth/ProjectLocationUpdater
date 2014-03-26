@@ -145,8 +145,8 @@ public class LocationUpdater {
         writeProjectLocation(projectLocationFile, newLocation);
     }
 
-	private void writeProjectLocation(final File projectLocationFile, final IPath newLocation) throws FileNotFoundException, IOException {
-		// Keep existing data
+    private void writeProjectLocation(final File projectLocationFile, final IPath newLocation) throws FileNotFoundException, IOException {
+        // Keep existing data
         String[] referenceNames;
 
         // Read the existing file
@@ -207,5 +207,5 @@ public class LocationUpdater {
                 out.close();
             }
         }
-	}
+    }
 }
