@@ -1,12 +1,10 @@
 package com.github.eclipse.projectlocationupdater.actions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -25,196 +23,184 @@ import com.github.eclipse.projectlocationupdater.LocationUpdater;
 
 /**
  * Action associated to the "Update Location" pop-up menu
- * 
+ *
  * @author Thomas Calmant
  */
 public class BatchUpdateAction implements IObjectActionDelegate {
+    /** The location updater */
+    private final LocationUpdater updater = new LocationUpdater();
 
-	/** The location updater */
-	private final LocationUpdater pLocationUpdater = new LocationUpdater();
+    /** Current selection */
+    private ISelection selection;
 
-	/** Current selection */
-	private ISelection pSelection;
+    /**
+     * Returns the common part of the locations of the given projects
+     *
+     * @param projects
+     *            A list of closed projects to relocate
+     * @return THe common part of the path to projects (or an empty string)
+     */
+    private String getCommonPath(final Collection<IProject> projects) {
+        if (projects.size() == 1) {
+            // Only one element...
+            IProject project = projects.iterator().next();
+            try {
+                return updater.readProjectLocation(project);
+            } catch (final IOException e) {
+                // TODO Log it
+                e.printStackTrace();
+                return "";
+            }
+        }
 
-	/**
-	 * Returns the common part of the locations of the given projects
-	 * 
-	 * @param aProjects
-	 *            A list of closed projects to relocate
-	 * @return THe common part of the path to projects (or an empty string)
-	 */
-	private String getCommonPath(final Collection<IProject> aProjects) {
+        // Make an array of projects names
+        final Collection<String> projectLocations = new ArrayList<String>();
+        for (final IProject project : projects) {
+            try {
+                String location = updater.readProjectLocation(project);
+                projectLocations.add(location);
+            } catch (final IOException e) {
+                // TODO Log it
+                e.printStackTrace();
+            }
+        }
 
-		if (aProjects.size() == 1) {
-			// Only one element...
-			try {
-				return pLocationUpdater.readProjectLocation(aProjects
-						.iterator().next());
-			} catch (final IOException e) {
-				// TODO Log it
-				e.printStackTrace();
-				return "";
-			}
-		}
+        // Sort it
+        final String[] locationsStr = projectLocations.toArray(new String[0]);
+        Arrays.sort(locationsStr);
 
-		// Make an array of projects names
-		final Collection<String> projectLocations = new LinkedList<String>();
-		for (final IProject project : aProjects) {
-			try {
-				projectLocations.add(pLocationUpdater
-						.readProjectLocation(project));
-			} catch (final IOException e) {
-				// TODO Log it
-				e.printStackTrace();
-			}
-		}
+        // Common part can be determined by first and last elements of the array
+        String firstProjectLocation = locationsStr[0];
+        String lastProjectLocation = locationsStr[locationsStr.length - 1];
+        return getCommonPathPrefix(firstProjectLocation, lastProjectLocation);
+    }
 
-		// Sort it
-		final String[] locationsStr = projectLocations.toArray(new String[0]);
-		Arrays.sort(locationsStr);
+    /**
+     * Returns the longest common part of the given two strings
+     *
+     * @param a
+     *            A string
+     * @param b
+     *            Another string
+     * @return The common part of the strings
+     */
+    private String getCommonPathPrefix(final String a, final String b) {
+        // Compute the common part
+        final IPath path = new Path(a);
+        final IPath otherPath = new Path(b);
+        final int matchingSegments = path.matchingFirstSegments(otherPath);
 
-		// Common part can be determined by first and last elements of the array
-		return getCommonPathPrefix(locationsStr[0],
-				locationsStr[locationsStr.length - 1]);
-	}
+        // Make the common path
+        int segmentCountToRemove = path.segmentCount() - matchingSegments;
+        return path.removeLastSegments(segmentCountToRemove).toString();
+    }
 
-	/**
-	 * Returns the longest common part of the given two strings
-	 * 
-	 * @param aString
-	 *            A string
-	 * @param aOther
-	 *            Another string
-	 * @return The common part of the strings
-	 */
-	private String getCommonPathPrefix(final String aString, final String aOther) {
+    /**
+     * Computes the list of the projects to update. They must be closed to be
+     * selected.
+     *
+     * @return The projects to update
+     */
+    private Collection<IProject> getSelectedProjects() {
+        final Collection<IProject> selectedProjects = new ArrayList<IProject>();
+        if (selection instanceof IStructuredSelection) {
+            for (final Iterator<?> it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
+                final Object element = it.next();
+                IProject project = null;
 
-		// Compute the common part
-		final IPath path = new Path(aString);
-		final IPath otherPath = new Path(aOther);
-		final int matchingSegments = path.matchingFirstSegments(otherPath);
+                if (element instanceof IProject) {
+                    // Is the element a project ?
+                    project = (IProject) element;
+                } else if (element instanceof IAdaptable) {
+                    // Is the element adaptable to a project ?
+                    project = (IProject) ((IAdaptable) element)
+                            .getAdapter(IProject.class);
+                }
 
-		// Make the common path
-		return path.removeLastSegments(path.segmentCount() - matchingSegments)
-				.toString();
-	}
+                if (project != null && !project.isOpen()) {
+                    // Add the found project, if it is closed
+                    selectedProjects.add(project);
+                }
+            }
+        }
 
-	/**
-	 * Computes the list of the projects to update. They must be closed to be
-	 * selected.
-	 * 
-	 * @return The projects to update
-	 */
-	private Collection<IProject> getSelectedProjects() {
+        return selectedProjects;
+    }
 
-		final Set<IProject> selectedProjects = new LinkedHashSet<IProject>();
-		if (pSelection instanceof IStructuredSelection) {
-			for (final Iterator<?> it = ((IStructuredSelection) pSelection)
-					.iterator(); it.hasNext();) {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
+    @Override
+    public void run(final IAction action) {
+        // Prepare selection list
+        final Collection<IProject> selectedProjects = getSelectedProjects();
 
-				final Object element = it.next();
-				IProject project = null;
+        if (selectedProjects.isEmpty()) {
+            // No valid project found, do nothing
+            // TODO: log/trace it
+            return;
+        }
 
-				if (element instanceof IProject) {
-					// Is the element a project ?
-					project = (IProject) element;
+        // Compute the common path part
+        final String commonPath = getCommonPath(selectedProjects);
+        if (commonPath.isEmpty()) {
+            // No common path
+            // TODO: open a dialog and log it
+            return;
+        }
 
-				} else if (element instanceof IAdaptable) {
-					// Is the element adaptable to a project ?
-					project = (IProject) ((IAdaptable) element)
-							.getAdapter(IProject.class);
-				}
+        // Get the shell
+        final Shell shell = Activator.getDefault().getWorkbench()
+                .getActiveWorkbenchWindow().getShell();
 
-				if (project != null && !project.isOpen()) {
-					// Add the found project, if it is closed
-					selectedProjects.add(project);
-				}
-			}
-		}
+        final LocationUpdateDialog dialog = new LocationUpdateDialog(shell, selectedProjects, commonPath);
+        if (dialog.open() != Window.OK) {
+            // User click CANCEL: do nothing
+            return;
+        }
 
-		return selectedProjects;
-	}
+        // Get the common part and the new path
+        final String newPath = dialog.getNewLocation();
+        if (newPath.equals(commonPath)) {
+            // Nothing to do
+            return;
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	@Override
-	public void run(final IAction aAction) {
+        // Update project
+        for (final IProject project : selectedProjects) {
+            try {
+                updater.updateLocationSubstring(project, commonPath, newPath);
+            } catch (final IOException e) {
+                // TODO Use a logger
+                System.err.println("Error updating the location file: " + e);
+                e.printStackTrace();
+            }
+        }
+    }
 
-		// Prepare selection list
-		final Collection<IProject> selectedProjects = getSelectedProjects();
-		if (selectedProjects.isEmpty()) {
-			// No valid project found, do nothing
-			// TODO: log/trace it
-			return;
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+     * .IAction, org.eclipse.jface.viewers.ISelection)
+     */
+    @Override
+    public void selectionChanged(final IAction action, final ISelection selection) {
+        this.selection = selection;
+    }
 
-		// Compute the common path part
-		final String commonPath = getCommonPath(selectedProjects);
-		if (commonPath.isEmpty()) {
-			// No common path
-			// TODO: open a dialog and log it
-			return;
-		}
-
-		// Get the shell
-		final Shell shell = Activator.getDefault().getWorkbench()
-				.getActiveWorkbenchWindow().getShell();
-
-		final LocationUpdateDialog dialog = new LocationUpdateDialog(shell,
-				selectedProjects, commonPath);
-		if (dialog.open() != Window.OK) {
-			// User click CANCEL: do nothing
-			return;
-		}
-
-		// Get the common part and the new path
-		final String newPath = dialog.getNewLocation();
-		if (newPath.equals(commonPath)) {
-			// Nothing to do
-			return;
-		}
-
-		// Update project
-		for (final IProject project : selectedProjects) {
-			try {
-				pLocationUpdater.updateLocationSubstring(project, commonPath,
-						newPath);
-
-			} catch (final IOException ex) {
-				// TODO Use a logger
-				System.err.println("Error updating the location file: " + ex);
-				ex.printStackTrace();
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-	 * .IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	@Override
-	public void selectionChanged(final IAction aAction,
-			final ISelection aSelection) {
-
-		pSelection = aSelection;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
-	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	@Override
-	public void setActivePart(final IAction aAction,
-			final IWorkbenchPart aTargetPart) {
-		// Nothing to do
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
+     * action.IAction, org.eclipse.ui.IWorkbenchPart)
+     */
+    @Override
+    public void setActivePart(final IAction action, final IWorkbenchPart aTargetPart) {
+        // Nothing to do
+    }
 }
