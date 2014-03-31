@@ -62,6 +62,80 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 		this.commonPath = commonPath;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.
+	 * swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createContents(final Composite parent) {
+		// Call parent
+		final Control content = super.createContents(parent);
+
+		// Set the title
+		setTitle("Project location updater");
+
+		// Set the message
+		setMessage("Update the location of " + projects.size() + " project(s)");
+		return content;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse
+	 * .swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createDialogArea(final Composite parent) {
+		// call parent
+		final Composite dialogArea = (Composite) super.createDialogArea(parent);
+
+		// prepare the layout
+		final Composite composite = new Composite(dialogArea, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayout(new GridLayout(3, false));
+
+		// add the page contents
+		createProjectsList(composite);
+		createCurrentLocation(composite);
+		createNewLocation(composite);
+
+		return dialogArea;
+	}
+
+	/**
+	 * Shows the list of selected projects
+	 *
+	 * @param composite
+	 *            Parent composite
+	 */
+	private void createProjectsList(final Composite composite) {
+		// Make an array of projects names
+		int i = 0;
+		final String[] projectNames = new String[projects.size()];
+		for (final IProject project : projects) {
+			projectNames[i++] = project.getName();
+		}
+
+		// Sort it
+		Arrays.sort(projectNames);
+
+		// Make the list widget
+		final List projectsList = new List(composite, SWT.V_SCROLL);
+		for (final String projectName : projectNames) {
+			projectsList.add(projectName);
+		}
+
+		// Let it have some space
+		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gridData.horizontalSpan = 3;
+		projectsList.setLayoutData(gridData);
+	}
+
 	/**
 	 * Shows the common part of the project locations
 	 *
@@ -114,83 +188,6 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 				}
 			}
 		});
-	}
-
-	/**
-	 * Shows the list of selected projects
-	 *
-	 * @param composite
-	 *            Parent composite
-	 */
-	private void createProjectsList(final Composite composite) {
-		// Make an array of projects names
-		int i = 0;
-		final String[] projectNames = new String[projects.size()];
-		for (final IProject project : projects) {
-			projectNames[i++] = project.getName();
-		}
-
-		// Sort it
-		Arrays.sort(projectNames);
-
-		// Make the list widget
-		final List projectsList = new List(composite, SWT.V_SCROLL);
-		for (final String projectName : projectNames) {
-			projectsList.add(projectName);
-		}
-
-		// Let it have some space
-		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gridData.horizontalSpan = 3;
-		projectsList.setLayoutData(gridData);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.
-	 * swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createContents(final Composite parent) {
-		// Call parent
-		final Control content = super.createContents(parent);
-
-		// Set the title
-		setTitle("Project location updater");
-
-		// Set the message
-		setMessage("Update the location of " + projects.size() + " project(s)");
-		return content;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createDialogArea(final Composite parent) {
-		// Call parent
-		final Composite dialogArea = (Composite) super.createDialogArea(parent);
-
-		// Prepare the layout
-		final Composite composite = new Composite(dialogArea, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(new GridLayout(3, false));
-
-		// Show the list of the modified projects
-		createProjectsList(composite);
-
-		// Current path
-		createCurrentLocation(composite);
-
-		// New path
-		createNewLocation(composite);
-		return dialogArea;
 	}
 
 	/**
