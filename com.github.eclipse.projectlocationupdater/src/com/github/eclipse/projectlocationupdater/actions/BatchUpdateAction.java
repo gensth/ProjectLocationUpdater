@@ -27,180 +27,180 @@ import com.github.eclipse.projectlocationupdater.LocationUpdater;
  * @author Thomas Calmant
  */
 public class BatchUpdateAction implements IObjectActionDelegate {
-    /** The location updater */
+	/** The location updater */
     private final LocationUpdater updater = new LocationUpdater();
 
-    /** Current selection */
+	/** Current selection */
     private ISelection selection;
 
-    /**
-     * Returns the common part of the locations of the given projects
-     *
+	/**
+	 * Returns the common part of the locations of the given projects
+	 *
      * @param projects
-     *            A list of closed projects to relocate
-     * @return THe common part of the path to projects (or an empty string)
-     */
+	 *            A list of closed projects to relocate
+	 * @return THe common part of the path to projects (or an empty string)
+	 */
     private String getCommonPath(final Collection<IProject> projects) {
         if (projects.size() == 1) {
-            // Only one element...
+			// Only one element...
             IProject project = projects.iterator().next();
-            try {
+			try {
                 return updater.readProjectLocation(project);
-            } catch (final IOException e) {
+			} catch (final IOException e) {
                 // TODO Log it
                 e.printStackTrace();
-                return "";
-            }
-        }
+				return "";
+			}
+		}
 
-        // Make an array of projects names
+		// Make an array of projects names
         final Collection<String> projectLocations = new ArrayList<String>();
         for (final IProject project : projects) {
-            try {
+			try {
                 String location = updater.readProjectLocation(project);
                 projectLocations.add(location);
-            } catch (final IOException e) {
+			} catch (final IOException e) {
                 // TODO Log it
                 e.printStackTrace();
-            }
-        }
+			}
+		}
 
-        // Sort it
-        final String[] locationsStr = projectLocations.toArray(new String[0]);
-        Arrays.sort(locationsStr);
+		// Sort it
+		final String[] locationsStr = projectLocations.toArray(new String[0]);
+		Arrays.sort(locationsStr);
 
-        // Common part can be determined by first and last elements of the array
+		// Common part can be determined by first and last elements of the array
         String firstProjectLocation = locationsStr[0];
         String lastProjectLocation = locationsStr[locationsStr.length - 1];
         return getCommonPathPrefix(firstProjectLocation, lastProjectLocation);
-    }
+	}
 
-    /**
-     * Returns the longest common part of the given two strings
-     *
+	/**
+	 * Returns the longest common part of the given two strings
+	 *
      * @param a
-     *            A string
+	 *            A string
      * @param b
-     *            Another string
-     * @return The common part of the strings
-     */
+	 *            Another string
+	 * @return The common part of the strings
+	 */
     private String getCommonPathPrefix(final String a, final String b) {
-        // Compute the common part
+		// Compute the common part
         final IPath path = new Path(a);
         final IPath otherPath = new Path(b);
-        final int matchingSegments = path.matchingFirstSegments(otherPath);
+		final int matchingSegments = path.matchingFirstSegments(otherPath);
 
-        // Make the common path
+		// Make the common path
         int segmentCountToRemove = path.segmentCount() - matchingSegments;
         return path.removeLastSegments(segmentCountToRemove).toString();
-    }
+	}
 
-    /**
-     * Computes the list of the projects to update. They must be closed to be
-     * selected.
-     *
-     * @return The projects to update
-     */
-    private Collection<IProject> getSelectedProjects() {
+	/**
+	 * Computes the list of the projects to update. They must be closed to be
+	 * selected.
+	 *
+	 * @return The projects to update
+	 */
+	private Collection<IProject> getSelectedProjects() {
         final Collection<IProject> selectedProjects = new ArrayList<IProject>();
         if (selection instanceof IStructuredSelection) {
             for (final Iterator<?> it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
-                final Object element = it.next();
-                IProject project = null;
+				final Object element = it.next();
+				IProject project = null;
 
-                if (element instanceof IProject) {
-                    // Is the element a project ?
-                    project = (IProject) element;
-                } else if (element instanceof IAdaptable) {
-                    // Is the element adaptable to a project ?
-                    project = (IProject) ((IAdaptable) element)
-                            .getAdapter(IProject.class);
-                }
+				if (element instanceof IProject) {
+					// Is the element a project ?
+					project = (IProject) element;
+				} else if (element instanceof IAdaptable) {
+					// Is the element adaptable to a project ?
+					project = (IProject) ((IAdaptable) element)
+							.getAdapter(IProject.class);
+				}
 
-                if (project != null && !project.isOpen()) {
-                    // Add the found project, if it is closed
-                    selectedProjects.add(project);
-                }
-            }
-        }
+				if (project != null && !project.isOpen()) {
+					// Add the found project, if it is closed
+					selectedProjects.add(project);
+				}
+			}
+		}
 
-        return selectedProjects;
-    }
+		return selectedProjects;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
+	@Override
     public void run(final IAction action) {
-        // Prepare selection list
-        final Collection<IProject> selectedProjects = getSelectedProjects();
+		// Prepare selection list
+		final Collection<IProject> selectedProjects = getSelectedProjects();
 
-        if (selectedProjects.isEmpty()) {
-            // No valid project found, do nothing
-            // TODO: log/trace it
-            return;
-        }
+		if (selectedProjects.isEmpty()) {
+			// No valid project found, do nothing
+			// TODO: log/trace it
+			return;
+		}
 
-        // Compute the common path part
-        final String commonPath = getCommonPath(selectedProjects);
-        if (commonPath.isEmpty()) {
-            // No common path
-            // TODO: open a dialog and log it
-            return;
-        }
+		// Compute the common path part
+		final String commonPath = getCommonPath(selectedProjects);
+		if (commonPath.isEmpty()) {
+			// No common path
+			// TODO: open a dialog and log it
+			return;
+		}
 
-        // Get the shell
-        final Shell shell = Activator.getDefault().getWorkbench()
-                .getActiveWorkbenchWindow().getShell();
+		// Get the shell
+		final Shell shell = Activator.getDefault().getWorkbench()
+				.getActiveWorkbenchWindow().getShell();
 
         final LocationUpdateDialog dialog = new LocationUpdateDialog(shell, selectedProjects, commonPath);
-        if (dialog.open() != Window.OK) {
-            // User click CANCEL: do nothing
-            return;
-        }
+		if (dialog.open() != Window.OK) {
+			// User click CANCEL: do nothing
+			return;
+		}
 
-        // Get the common part and the new path
-        final String newPath = dialog.getNewLocation();
-        if (newPath.equals(commonPath)) {
-            // Nothing to do
-            return;
-        }
+		// Get the common part and the new path
+		final String newPath = dialog.getNewLocation();
+		if (newPath.equals(commonPath)) {
+			// Nothing to do
+			return;
+		}
 
-        // Update project
-        for (final IProject project : selectedProjects) {
-            try {
+		// Update project
+		for (final IProject project : selectedProjects) {
+			try {
                 updater.updateLocationSubstring(project, commonPath, newPath);
             } catch (final IOException e) {
-                // TODO Use a logger
+				// TODO Use a logger
                 System.err.println("Error updating the location file: " + e);
                 e.printStackTrace();
-            }
-        }
-    }
+			}
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
-     * .IAction, org.eclipse.jface.viewers.ISelection)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
+	 * .IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	@Override
     public void selectionChanged(final IAction action, final ISelection selection) {
         this.selection = selection;
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
-     * action.IAction, org.eclipse.ui.IWorkbenchPart)
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.
+	 * action.IAction, org.eclipse.ui.IWorkbenchPart)
+	 */
+	@Override
     public void setActivePart(final IAction action, final IWorkbenchPart aTargetPart) {
-        // Nothing to do
-    }
+		// Nothing to do
+	}
 }
