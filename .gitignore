@@ -5,5 +5,3 @@ com.github.eclipse.projectlocationupdater.updatesite/index.html
 com.github.eclipse.projectlocationupdater.updatesite/plugins/
 com.github.eclipse.projectlocationupdater.updatesite/web/
 com.github.eclipse.projectlocationupdater/bin/
-workspace/
-runtime-EclipseApplication
