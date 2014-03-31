@@ -36,7 +36,7 @@ import com.github.eclipse.projectlocationupdater.i18n.Messages;
  * @author Max Gensthaler
  */
 @SuppressWarnings("restriction")
-public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
+public class PLUPropertyPage extends PropertyPage {
 	private static final String USAGE = Messages.proppage_usage;
 	private static final String CURRENT_LOCATION = Messages.proppage_currentLocation;
 	private static final String NEW_LOCATION = Messages.proppage_newLocation;
@@ -48,7 +48,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 	private Text currentLocationText;
 	private Text newLocationText;
 
-	public ProjectLocationUpdaterPropertyPage() {
+	public PLUPropertyPage() {
 		super();
 	}
 
@@ -159,7 +159,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 				LocationUpdater.writeProjectLocation(getMyProject(), newLocationPath);
 			} catch (IOException e) {
 				MessageDialog.openError(getShell(), Messages.errorDialog_title, Messages.errorDialog_errorOnApplyPrefix + e.getMessage());
-				throw new RuntimeException("Error in " + ProjectLocationUpdaterPropertyPage.class.getName(), e); //$NON-NLS-1$
+				throw new RuntimeException("Error in " + PLUPropertyPage.class.getName(), e); //$NON-NLS-1$
 				// return false;
 			}
 		}

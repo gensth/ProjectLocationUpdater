@@ -5,8 +5,8 @@
       <page objectClass="org.eclipse.core.resources.IResource"
       		adaptable="true"
       		name="Project Location Updater"
-            class="com.github.eclipse.projectlocationupdater.properties.ProjectLocationUpdaterPropertyPage"
-            id="com.github.eclipse.projectlocationupdater.properties.projectLocationUpdaterPropertyPage">
+            class="com.github.eclipse.projectlocationupdater.properties.PLUPropertyPage"
+            id="com.github.eclipse.projectlocationupdater.properties.pluPropertyPage">
       </page>
    </extension>
    <extension
@@ -20,9 +20,9 @@
                class="com.github.eclipse.projectlocationupdater.actions.BatchUpdateAction"
                enablesFor="*"
                id="com.github.eclipse.projectlocationupdater.updateLocations"
-               label="Update Locations"
+               label="Update Project Location(s)"
                menubarPath="additions"
-               tooltip="Change project(s) location">
+               tooltip="Update the project location(s) to a new path in the file system.">
          </action>
       </objectContribution>
    </extension>
