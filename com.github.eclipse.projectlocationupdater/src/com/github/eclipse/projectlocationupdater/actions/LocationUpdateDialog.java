@@ -186,6 +186,14 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 		});
 	}
 
+	@Override
+	protected void okPressed() {
+		// store the field content, while it is not disposed
+		newLocation = newLocationText.getText();
+	
+		super.okPressed();
+	}
+
 	/**
 	 * Returns the new location chosen by the user.
 	 *
@@ -193,13 +201,5 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 */
 	public String getNewLocation() {
 		return newLocation;
-	}
-
-	@Override
-	protected void okPressed() {
-		// store the field content, while it is not disposed
-		newLocation = newLocationText.getText();
-
-		super.okPressed();
 	}
 }
