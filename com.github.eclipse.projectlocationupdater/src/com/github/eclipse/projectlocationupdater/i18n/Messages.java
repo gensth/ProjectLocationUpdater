@@ -1,4 +1,4 @@
-package com.github.eclipse.projectlocationupdater.properties;
+package com.github.eclipse.projectlocationupdater.i18n;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -6,7 +6,7 @@ import org.eclipse.osgi.util.NLS;
  * @author Max Gensthaler
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "com.github.eclipse.projectlocationupdater.properties.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
 	public static String error_dialog_messagePrefix;
 	public static String error_dialog_title;
 	public static String proppage_browse;

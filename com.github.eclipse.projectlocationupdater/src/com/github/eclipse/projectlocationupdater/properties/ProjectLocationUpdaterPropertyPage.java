@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import com.github.eclipse.projectlocationupdater.LocationUpdater;
+import com.github.eclipse.projectlocationupdater.i18n.Messages;
 
 /**
  * Property page for closed projects to update the project location.
