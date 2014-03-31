@@ -115,17 +115,22 @@ public class LocationUpdater {
 	 * @throws IOException
 	 *             Error reading or writing the project location file
 	 */
-    public void updateLocationSubstring(final IProject project, final String previousPrefix, final String newPrefix) throws IOException {
+    public void updateLocationSubstring(final IProject project, String previousPrefix, String newPrefix) throws IOException {
 		// Read the current location
-        IPath projectLocationFilePath = getProjectLocationFile(project);
-        final File projectLocationFile = projectLocationFilePath.toFile();
-        final String currentLocation = readProjectLocation(projectLocationFilePath);
+        IPath projectLocationFile = getProjectLocationFile(project);
+		final String currentLocation = readProjectLocation(projectLocationFile);
+
+		// Normalize paths
+		previousPrefix.replace('\\', '/');
+		newPrefix.replace('\\', '/');
+		if (previousPrefix.endsWith("/") && !newPrefix.endsWith("/")) {
+			newPrefix = newPrefix + "/";
+		}
 
 		// Replace the substring
-        final String newLocationStr = currentLocation.replace(previousPrefix, newPrefix);
-        final IPath newLocation = new Path(newLocationStr);
+		final String newLocationStr = currentLocation.replace(previousPrefix, newPrefix);
 
-        writeProjectLocation(projectLocationFile, newLocation);
+        writeProjectLocation(projectLocationFile.toFile(), new Path(newLocationStr));
 	}
 
 	/**
