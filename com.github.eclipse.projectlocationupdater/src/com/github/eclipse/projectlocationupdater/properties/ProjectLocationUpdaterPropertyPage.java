@@ -159,7 +159,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 			try {
 				updater.writeProjectLocation(getMyProject(), newLocationPath);
 			} catch (IOException e) {
-				MessageDialog.openError(getShell(), Messages.error_dialog_title, Messages.error_dialog_messagePrefix + e.getMessage());
+				MessageDialog.openError(getShell(), Messages.errorDialog_title, Messages.errorDialog_errorOnApplyPrefix + e.getMessage());
 				throw new RuntimeException("Error in " + ProjectLocationUpdaterPropertyPage.class.getName(), e); //$NON-NLS-1$
 				// return false;
 			}
