@@ -53,11 +53,11 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 
-		// Get the workspace root
+		// get the workspace root
 		IProject firstProject = projects.iterator().next();
 		workspaceRoot = firstProject.getWorkspace().getRoot().getLocation().toString();
 
-		// Copy the projects list
+		// copy the projects list
 		this.projects = new ArrayList<IProject>(projects);
 		this.commonPath = commonPath;
 	}
@@ -65,19 +65,17 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.
-	 * swt.widgets.Composite)
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createContents(final Composite parent) {
-		// Call parent
+		// call parent
 		final Control content = super.createContents(parent);
 
-		// Set the title
+		// set the title
 		setTitle("Project location updater");
 
-		// Set the message
+		// set the message
 		setMessage("Update the location of " + projects.size() + " project(s)");
 		return content;
 	}
@@ -85,9 +83,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse
-	 * .swt.widgets.Composite)
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(final Composite parent) {
@@ -114,23 +110,23 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 *            Parent composite
 	 */
 	private void createProjectsList(final Composite composite) {
-		// Make an array of projects names
+		// make an array of projects names
 		int i = 0;
 		final String[] projectNames = new String[projects.size()];
 		for (final IProject project : projects) {
 			projectNames[i++] = project.getName();
 		}
 
-		// Sort it
+		// sort it
 		Arrays.sort(projectNames);
 
-		// Make the list widget
+		// make the list widget
 		final List projectsList = new List(composite, SWT.V_SCROLL);
 		for (final String projectName : projectNames) {
 			projectsList.add(projectName);
 		}
 
-		// Let it have some space
+		// let it have some space
 		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalSpan = 3;
 		projectsList.setLayoutData(gridData);
@@ -175,7 +171,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 		browseButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
-				// Do nothing
+				// do nothing
 			}
 
 			@Override
@@ -191,7 +187,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Returns the new location chosen by the user
+	 * Returns the new location chosen by the user.
 	 *
 	 * @return The new location
 	 */
@@ -201,7 +197,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		// Store the field content, while it is not disposed
+		// store the field content, while it is not disposed
 		newLocation = newLocationText.getText();
 
 		super.okPressed();
