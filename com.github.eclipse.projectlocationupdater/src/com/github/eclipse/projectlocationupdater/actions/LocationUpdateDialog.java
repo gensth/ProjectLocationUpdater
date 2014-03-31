@@ -36,10 +36,10 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	private final String workspaceRoot;
 
 	/** New common path value */
-	private String newPathString;
+	private String newLocation;
 
 	/** New common path text field */
-	private Text newPathText;
+	private Text newLocationText;
 
 	/**
 	 * Instantiate a new location update dialog.
@@ -68,7 +68,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 * @param composite
 	 *            Parent composite
 	 */
-	private void addCommonLocation(final Composite composite) {
+	private void createCurrentLocation(final Composite composite) {
 		final Label currentLocationLabel = new Label(composite, SWT.NONE);
 		currentLocationLabel.setText("Common part of locations:");
 
@@ -86,15 +86,15 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 * @param composite
 	 *            Parent composite
 	 */
-	private void addNewLocation(final Composite composite) {
+	private void createNewLocation(final Composite composite) {
 		final Label newLocationLabel = new Label(composite, SWT.NONE);
 		newLocationLabel.setText("New location:");
 
-		newPathText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		newLocationText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		final GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd.widthHint = 40;
-		newPathText.setLayoutData(gd);
-		newPathText.setText(commonPath);
+		newLocationText.setLayoutData(gd);
+		newLocationText.setText(commonPath);
 
 		final Button browseButton = new Button(composite, SWT.NONE);
 		browseButton.setText("...");
@@ -110,7 +110,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 				dd.setFilterPath(workspaceRoot);
 				final String selected = dd.open();
 				if (selected != null) {
-					newPathText.setText(selected);
+					newLocationText.setText(selected);
 				}
 			}
 		});
@@ -122,7 +122,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 * @param composite
 	 *            Parent composite
 	 */
-	private void addProjectsList(final Composite composite) {
+	private void createProjectsList(final Composite composite) {
 		// Make an array of projects names
 		int i = 0;
 		final String[] projectNames = new String[projects.size()];
@@ -183,13 +183,13 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 		composite.setLayout(new GridLayout(3, false));
 
 		// Show the list of the modified projects
-		addProjectsList(composite);
+		createProjectsList(composite);
 
 		// Current path
-		addCommonLocation(composite);
+		createCurrentLocation(composite);
 
 		// New path
-		addNewLocation(composite);
+		createNewLocation(composite);
 		return dialogArea;
 	}
 
@@ -199,13 +199,13 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 * @return The new location
 	 */
 	public String getNewLocation() {
-		return newPathString;
+		return newLocation;
 	}
 
 	@Override
 	protected void okPressed() {
 		// Store the field content, while it is not disposed
-		newPathString = newPathText.getText();
+		newLocation = newLocationText.getText();
 
 		super.okPressed();
 	}
