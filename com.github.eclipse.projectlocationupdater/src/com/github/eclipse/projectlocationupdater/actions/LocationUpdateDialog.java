@@ -1,8 +1,8 @@
 package com.github.eclipse.projectlocationupdater.actions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -22,86 +22,81 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Requests the new location to the user
- * 
+ *
  * @author Thomas Calmant
  */
 public class LocationUpdateDialog extends TitleAreaDialog {
+	/** The modified project */
+	private final Collection<IProject> projects;
 
 	/** Current common path part (read only) */
-	private final String pCommonPath;
-
-	/** New common path value */
-	private String pNewPathString;
-
-	/** New common path text field */
-	private Text pNewPathText;
-
-	/** The modified project */
-	private final Collection<IProject> pProjects;
+	private final String commonPath;
 
 	/** Workspace root path */
-	private final String pWorkspaceRoot;
+	private final String workspaceRoot;
+
+	/** New common path value */
+	private String newPathString;
+
+	/** New common path text field */
+	private Text newPathText;
 
 	/**
-	 * Instantiate a new location update dialog
-	 * 
-	 * @param aParentShell
+	 * Instantiate a new location update dialog.
+	 *
+	 * @param parentShell
 	 *            The parent shell
-	 * @param aProjects
+	 * @param projects
 	 *            Projects that will be configured
 	 */
-	public LocationUpdateDialog(final Shell aParentShell,
-			final Collection<IProject> aProjects, final String aCommonPath) {
-
-		super(aParentShell);
+	public LocationUpdateDialog(final Shell parentShell, final Collection<IProject> projects, final String commonPath) {
+		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 
 		// Get the workspace root
-		pWorkspaceRoot = aProjects.iterator().next().getWorkspace().getRoot()
-				.getLocation().toString();
+		IProject firstProject = projects.iterator().next();
+		workspaceRoot = firstProject.getWorkspace().getRoot().getLocation().toString();
 
 		// Copy the projects list
-		pProjects = new LinkedList<IProject>(aProjects);
-		pCommonPath = aCommonPath;
+		this.projects = new ArrayList<IProject>(projects);
+		this.commonPath = commonPath;
 	}
 
 	/**
 	 * Shows the common part of the project locations
-	 * 
-	 * @param aComposite
+	 *
+	 * @param composite
 	 *            Parent composite
 	 */
-	private void addCommonLocation(final Composite aComposite) {
-
-		final Label currentLocationLabel = new Label(aComposite, SWT.NONE);
+	private void addCommonLocation(final Composite composite) {
+		final Label currentLocationLabel = new Label(composite, SWT.NONE);
 		currentLocationLabel.setText("Common part of locations:");
 
-		final Text currentLocationText = new Text(aComposite, SWT.SINGLE
+		final Text currentLocationText = new Text(composite, SWT.SINGLE
 				| SWT.READ_ONLY | SWT.BORDER);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 		gd.widthHint = 40;
 		currentLocationText.setLayoutData(gd);
-		currentLocationText.setText(pCommonPath);
+		currentLocationText.setText(commonPath);
 	}
 
 	/**
 	 * Lets the user enter the new path
-	 * 
-	 * @param aComposite
+	 *
+	 * @param composite
 	 *            Parent composite
 	 */
-	private void addNewLocation(final Composite aComposite) {
-		final Label newLocationLabel = new Label(aComposite, SWT.NONE);
+	private void addNewLocation(final Composite composite) {
+		final Label newLocationLabel = new Label(composite, SWT.NONE);
 		newLocationLabel.setText("New location:");
 
-		pNewPathText = new Text(aComposite, SWT.SINGLE | SWT.BORDER);
-		final GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1,
-				1);
+		newPathText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		final GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd.widthHint = 40;
-		pNewPathText.setLayoutData(gd);
-		pNewPathText.setText(pCommonPath);
+		newPathText.setLayoutData(gd);
+		newPathText.setText(commonPath);
 
-		final Button browseButton = new Button(aComposite, SWT.NONE);
+		final Button browseButton = new Button(composite, SWT.NONE);
 		browseButton.setText("...");
 		browseButton.addSelectionListener(new SelectionListener() {
 			@Override
@@ -111,12 +106,11 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final DirectoryDialog dd = new DirectoryDialog(aComposite
-						.getShell(), SWT.OPEN);
-				dd.setFilterPath(pWorkspaceRoot);
+				final DirectoryDialog dd = new DirectoryDialog(composite.getShell(), SWT.OPEN);
+				dd.setFilterPath(workspaceRoot);
 				final String selected = dd.open();
 				if (selected != null) {
-					pNewPathText.setText(selected);
+					newPathText.setText(selected);
 				}
 			}
 		});
@@ -124,16 +118,15 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 	/**
 	 * Shows the list of selected projects
-	 * 
-	 * @param aComposite
+	 *
+	 * @param composite
 	 *            Parent composite
 	 */
-	private void addProjectsList(final Composite aComposite) {
-
+	private void addProjectsList(final Composite composite) {
 		// Make an array of projects names
 		int i = 0;
-		final String[] projectNames = new String[pProjects.size()];
-		for (final IProject project : pProjects) {
+		final String[] projectNames = new String[projects.size()];
+		for (final IProject project : projects) {
 			projectNames[i++] = project.getName();
 		}
 
@@ -141,7 +134,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 		Arrays.sort(projectNames);
 
 		// Make the list widget
-		final List projectsList = new List(aComposite, SWT.V_SCROLL);
+		final List projectsList = new List(composite, SWT.V_SCROLL);
 		for (final String projectName : projectNames) {
 			projectsList.add(projectName);
 		}
@@ -154,38 +147,35 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.
 	 * swt.widgets.Composite)
 	 */
 	@Override
-	protected Control createContents(final Composite aParent) {
-
+	protected Control createContents(final Composite parent) {
 		// Call parent
-		final Control content = super.createContents(aParent);
+		final Control content = super.createContents(parent);
 
 		// Set the title
 		setTitle("Project location updater");
 
 		// Set the message
-		setMessage("Update the location of " + pProjects.size() + " project(s)");
+		setMessage("Update the location of " + projects.size() + " project(s)");
 		return content;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse
 	 * .swt.widgets.Composite)
 	 */
 	@Override
-	protected Control createDialogArea(final Composite aParent) {
-
+	protected Control createDialogArea(final Composite parent) {
 		// Call parent
-		final Composite dialogArea = (Composite) super
-				.createDialogArea(aParent);
+		final Composite dialogArea = (Composite) super.createDialogArea(parent);
 
 		// Prepare the layout
 		final Composite composite = new Composite(dialogArea, SWT.NONE);
@@ -205,18 +195,18 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 	/**
 	 * Returns the new location chosen by the user
-	 * 
+	 *
 	 * @return The new location
 	 */
 	public String getNewLocation() {
-		return pNewPathString;
+		return newPathString;
 	}
 
 	@Override
 	protected void okPressed() {
-
 		// Store the field content, while it is not disposed
-		pNewPathString = pNewPathText.getText();
+		newPathString = newPathText.getText();
+
 		super.okPressed();
 	}
 }
