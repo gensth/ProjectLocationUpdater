@@ -43,7 +43,6 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 	private static final String BROWSE_TEXT = Messages.proppage_browse;
 	private static final String PROJECT_OPEN_WARNING = Messages.proppage_projectOpenWarning;
 
-	private final LocationUpdater updater = new LocationUpdater();
 	private IProject myProject;
 
 	private Text currentLocationText;
@@ -103,7 +102,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 
 		String currentLocation;
 		try {
-			currentLocation = updater.readProjectLocation(getMyProject());
+			currentLocation = LocationUpdater.readProjectLocation(getMyProject());
 		} catch (IOException e) {
 			currentLocation = ((IResource) getElement()).getProject().getLocation().toString();
 		}
@@ -157,7 +156,7 @@ public class ProjectLocationUpdaterPropertyPage extends PropertyPage {
 			// nothing to do, nothing changed
 		} else {
 			try {
-				updater.writeProjectLocation(getMyProject(), newLocationPath);
+				LocationUpdater.writeProjectLocation(getMyProject(), newLocationPath);
 			} catch (IOException e) {
 				MessageDialog.openError(getShell(), Messages.errorDialog_title, Messages.errorDialog_errorOnApplyPrefix + e.getMessage());
 				throw new RuntimeException("Error in " + ProjectLocationUpdaterPropertyPage.class.getName(), e); //$NON-NLS-1$

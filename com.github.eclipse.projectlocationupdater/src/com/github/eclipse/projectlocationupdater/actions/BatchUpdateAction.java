@@ -27,9 +27,6 @@ import com.github.eclipse.projectlocationupdater.LocationUpdater;
  * @author Thomas Calmant
  */
 public class BatchUpdateAction implements IObjectActionDelegate {
-	/** The location updater */
-    private final LocationUpdater updater = new LocationUpdater();
-
 	/** Current selection */
     private ISelection selection;
 
@@ -45,7 +42,7 @@ public class BatchUpdateAction implements IObjectActionDelegate {
 			// Only one element...
             IProject project = projects.iterator().next();
 			try {
-                return updater.readProjectLocation(project);
+                return LocationUpdater.readProjectLocation(project);
 			} catch (final IOException e) {
                 // TODO Log it
                 e.printStackTrace();
@@ -57,7 +54,7 @@ public class BatchUpdateAction implements IObjectActionDelegate {
         final Collection<String> projectLocations = new ArrayList<String>();
         for (final IProject project : projects) {
 			try {
-                String location = updater.readProjectLocation(project);
+                String location = LocationUpdater.readProjectLocation(project);
                 projectLocations.add(location);
 			} catch (final IOException e) {
                 // TODO Log it
@@ -171,7 +168,7 @@ public class BatchUpdateAction implements IObjectActionDelegate {
 		// Update project
 		for (final IProject project : selectedProjects) {
 			try {
-                updater.updateLocationSubstring(project, commonPath, newPath);
+				LocationUpdater.updateLocationSubstring(project, commonPath, newPath);
             } catch (final IOException e) {
 				// TODO Use a logger
                 System.err.println("Error updating the location file: " + e);
