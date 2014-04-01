@@ -67,22 +67,22 @@ public class PLUPropertyPage extends PropertyPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(3, false));
 
-		addUsage(composite);
+		createUsage(composite);
 		if (((IResource) getElement()).getProject().isOpen()) {
 			addProjectOpenWarning(composite);
 		}
-		addSeparatorLabel(composite);
-		addCurrentLocation(composite);
-		addNewLocation(composite);
+		createSeparatorLabel(composite);
+		createCurrentLocation(composite);
+		createNewLocation(composite);
 		return composite;
 	}
 
-	private void addSeparatorLabel(Composite composite) {
+	private void createSeparatorLabel(Composite composite) {
 		Label separatorLabel = new Label(composite, SWT.NONE); // separator label
 		separatorLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 	}
 
-	private void addUsage(Composite composite) {
+	private void createUsage(Composite composite) {
 		Label usageLabel = new Label(composite, SWT.NONE);
 		usageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 		usageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -96,7 +96,7 @@ public class PLUPropertyPage extends PropertyPage {
 		warningLabel.setText(PROJECT_OPEN_WARNING);
 	}
 
-	private void addCurrentLocation(Composite composite) {
+	private void createCurrentLocation(Composite composite) {
 		Label currentLocationLabel = new Label(composite, SWT.NONE);
 		currentLocationLabel.setText(CURRENT_LOCATION);
 
@@ -113,7 +113,7 @@ public class PLUPropertyPage extends PropertyPage {
 		currentLocationText.setText(currentLocation);
 	}
 
-	private void addNewLocation(final Composite composite) {
+	private void createNewLocation(final Composite composite) {
 		Label newLocationLabel = new Label(composite, SWT.NONE);
 		newLocationLabel.setText(NEW_LOCATION);
 
