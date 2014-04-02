@@ -33,7 +33,7 @@ public class PLUWizardProjectsPage extends WizardPage {
 	private Table table;
 
 	/** All available projects (input). */
-	private final IProject[] allProjects;
+	private final Collection<IProject> allProjects;
 	/**
 	 * The reselected projects (input). All elements must be contained in
 	 * {@link #allProjects}.
@@ -54,8 +54,23 @@ public class PLUWizardProjectsPage extends WizardPage {
 		setTitle(Messages.wizard_projectsPage_page_title);
 		setDescription(Messages.wizard_projectsPage_page_description);
 
-		this.allProjects = allProjects;
+		this.allProjects = filterProjects(allProjects);
 		this.preselectedProjects = Collections.unmodifiableSet(new HashSet<IProject>(preselectedProjects));
+	}
+
+	private static Collection<IProject> filterProjects(IProject[] projects) {
+		ArrayList<IProject> result = new ArrayList<IProject>(projects.length);
+		for (IProject project : projects) {
+			if (!isProjectHidden(project)) {
+				result.add(project);
+			}
+		}
+		return result;
+	}
+
+	private static boolean isProjectHidden(IProject project) {
+		// true, if this project lays in the workspace
+		return project.getRawLocation() == null;
 	}
 
 	@Override
@@ -92,9 +107,6 @@ public class PLUWizardProjectsPage extends WizardPage {
 		Color gray = display.getSystemColor(SWT.COLOR_GRAY);
 		for (IProject project : allProjects) {
 			String projectName = project.getName();
-			if (isProjectHidden(project)) {
-				continue;
-			}
 			String disabledReason = getDisabledReason(project);
 
 			TableItem item = new TableItem(table, SWT.NONE);
@@ -117,14 +129,6 @@ public class PLUWizardProjectsPage extends WizardPage {
 		for (int i = 0; i < titles.length; i++) {
 			table.getColumn(i).pack();
 		}
-	}
-
-	private boolean isProjectHidden(IProject project) {
-		if (project.getRawLocation() == null) {
-			// this project lays in the workspace
-			return true;
-		}
-		return false;
 	}
 
 	private static String getDisabledReason(IProject project) {
