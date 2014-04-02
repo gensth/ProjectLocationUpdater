@@ -2,28 +2,45 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension point="org.eclipse.ui.propertyPages">
-      <page objectClass="org.eclipse.core.resources.IResource"
-      		adaptable="true"
-      		name="Project Location Updater"
+      <page id="com.github.eclipse.projectlocationupdater.properties.pluPropertyPage"
+            name="Project Location Updater"
             class="com.github.eclipse.projectlocationupdater.properties.PLUPropertyPage"
-            id="com.github.eclipse.projectlocationupdater.properties.pluPropertyPage">
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution id="com.github.eclipse.projectlocationupdater.actions"
             adaptable="true"
-            id="com.github.eclipse.projectlocationupdater.batchUpdate"
             nameFilter="*"
             objectClass="org.eclipse.core.resources.IProject">
-         <action
-               class="com.github.eclipse.projectlocationupdater.actions.BatchUpdateAction"
-               enablesFor="*"
-               id="com.github.eclipse.projectlocationupdater.updateLocations"
-               label="Update Project Location(s)"
+<!--
+         <action id="com.github.eclipse.projectlocationupdater.actions.batchUpdate"
                menubarPath="additions"
-               tooltip="Update the project location(s) to a new path in the file system.">
+               label="Update Project Location(s)"
+               tooltip="Update the project location(s) to a new path in the file system."
+               class="com.github.eclipse.projectlocationupdater.actions.BatchUpdateAction"
+               enablesFor="*">
+         </action>
+ -->
+         <action id="com.github.eclipse.projectlocationupdater.actions.popupMenus.wizard"
+               menubarPath="additions"
+               label="Update Project Location(s)"
+               tooltip="Update the project location(s) to a new path in the file system."
+               class="com.github.eclipse.projectlocationupdater.actions.PLUWizardAction"
+               enablesFor="*">
          </action>
       </objectContribution>
+   </extension>
+   <extension point="org.eclipse.ui.actionSets">
+      <actionSet id="com.github.eclipse.projectlocationupdater.actionSet"
+            label="Project Location Updater"
+            visible="true">
+         <action id="com.github.eclipse.projectlocationupdater.actions.menu.project.wizard"
+               menubarPath="project/additions"
+               label="Update Project Location(s)"
+               class="com.github.eclipse.projectlocationupdater.actions.PLUWizardAction">
+         </action>
+      </actionSet>
    </extension>
 </plugin>

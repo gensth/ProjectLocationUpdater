@@ -15,6 +15,17 @@ public class Messages extends NLS {
 	public static String proppage_newLocation;
 	public static String proppage_projectOpenWarning;
 	public static String proppage_usage;
+	public static String wizard_projectsPage_page_description;
+	public static String wizard_projectsPage_page_name;
+	public static String wizard_projectsPage_page_title;
+	public static String wizard_projectsPage_projectTable_button_deselectAll;
+	public static String wizard_projectsPage_projectTable_button_selectAll;
+	public static String wizard_projectsPage_projectTable_header_projectName;
+	public static String wizard_projectsPage_projectTable_header_reasonWhyDisabled;
+	public static String wizard_projectsPage_projectTable_itemText_disabledReasonOpen;
+	public static String wizard_updatePage_page_description;
+	public static String wizard_updatePage_page_name;
+	public static String wizard_updatePage_page_title;
 
 	static {
 		// initialize resource bundle
