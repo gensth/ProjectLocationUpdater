@@ -79,7 +79,7 @@ public class PLUWizardAction implements IObjectActionDelegate, IWorkbenchWindowA
 		Shell shell = workbench.getActiveWorkbenchWindow().getShell();
 
 		// collect the projects
-		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		Collection<IProject> allProjects = toArrayList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		Collection<IProject> preselectedProjects = getSelectedProjects();
 
 		// create and open the wizard
@@ -90,6 +90,14 @@ public class PLUWizardAction implements IObjectActionDelegate, IWorkbenchWindowA
 		} else {
 			System.out.println("Cancel pressed");
 		}
+	}
+
+	private static <T> ArrayList<T> toArrayList(T[] array) {
+		ArrayList<T> list = new ArrayList<T>(array.length);
+		for (T t : array) {
+			list.add(t);
+		}
+		return list;
 	}
 
 	@Override

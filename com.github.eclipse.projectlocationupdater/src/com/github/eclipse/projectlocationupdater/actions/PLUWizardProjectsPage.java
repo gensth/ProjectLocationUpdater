@@ -1,11 +1,20 @@
 package com.github.eclipse.projectlocationupdater.actions;
 
+import static com.github.eclipse.projectlocationupdater.utils.ListUtil.filterToList;
+import static com.github.eclipse.projectlocationupdater.utils.ListUtil.filterToSet;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,6 +32,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import com.github.eclipse.projectlocationupdater.i18n.Messages;
+import com.github.eclipse.projectlocationupdater.utils.Predicate;
 
 /**
  * A {@link WizardPage} to select the projects to update.
@@ -30,10 +40,24 @@ import com.github.eclipse.projectlocationupdater.i18n.Messages;
  * @author Max Gensthaler
  */
 public class PLUWizardProjectsPage extends WizardPage {
-	private Table table;
+	private static final Comparator<IProject> PROJECT_NAME_COMPARATOR = new Comparator<IProject>() {
+		@Override
+		public int compare(IProject a, IProject b) {
+			return a.getName().compareTo(b.getName());
+		}
+	};
+	private static final Predicate<IProject> PROJECT_VISIBLE_PREDICATE = new Predicate<IProject>() {
+		@Override
+		public boolean apply(IProject project) {
+			// true, if this project lays outside of the workspace
+			return project.getRawLocation() != null;
+		}
+	};
+
+	private TableViewer tableViewer;
 
 	/** All available projects (input). */
-	private final Collection<IProject> allProjects;
+	private final List<IProject> allProjects;
 	/**
 	 * The reselected projects (input). All elements must be contained in
 	 * {@link #allProjects}.
@@ -49,28 +73,16 @@ public class PLUWizardProjectsPage extends WizardPage {
 	 *            The reselected projects (input, unmodifiable). All elements must be contained in
 	 *            {@link #allProjects}.
 	 */
-	public PLUWizardProjectsPage(IProject[] allProjects, Collection<IProject> preselectedProjects) {
+	public PLUWizardProjectsPage(Collection<IProject> allProjects, Collection<IProject> preselectedProjects) {
 		super(Messages.wizard_projectsPage_page_name);
 		setTitle(Messages.wizard_projectsPage_page_title);
 		setDescription(Messages.wizard_projectsPage_page_description);
 
-		this.allProjects = filterProjects(allProjects);
-		this.preselectedProjects = Collections.unmodifiableSet(new HashSet<IProject>(preselectedProjects));
-	}
+		List<IProject> allProjectsList = filterToList(allProjects, PROJECT_VISIBLE_PREDICATE);
+		Collections.sort(allProjectsList, PROJECT_NAME_COMPARATOR);
+		this.allProjects = allProjectsList;
 
-	private static Collection<IProject> filterProjects(IProject[] projects) {
-		ArrayList<IProject> result = new ArrayList<IProject>(projects.length);
-		for (IProject project : projects) {
-			if (!isProjectHidden(project)) {
-				result.add(project);
-			}
-		}
-		return result;
-	}
-
-	private static boolean isProjectHidden(IProject project) {
-		// true, if this project lays in the workspace
-		return project.getRawLocation() == null;
+		this.preselectedProjects = filterToSet(preselectedProjects, PROJECT_VISIBLE_PREDICATE);
 	}
 
 	@Override
@@ -84,58 +96,151 @@ public class PLUWizardProjectsPage extends WizardPage {
 		createSelectButtons(comp);
 
 		setControl(comp);
+
+		updatePageComplete();
+	}
+
+	private void updatePageComplete() {
+		boolean anyItemChecked = false;
+		for (TableItem item : tableViewer.getTable().getItems()) {
+			if (item.getChecked()) {
+				anyItemChecked = true;
+				break;
+			}
+		}
+		setPageComplete(anyItemChecked);
 	}
 
 	private void createProjectsTable(Composite parent) {
-		// create the table
-		table = new Table(parent, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		table.setLinesVisible(true);
+		tableViewer = new TableViewer(parent, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 200;
 		table.setLayoutData(data);
 
-		// set the table headers
-		String[] titles = { Messages.wizard_projectsPage_projectTable_header_projectName, Messages.wizard_projectsPage_projectTable_header_reasonWhyDisabled };
-		for (int i = 0; i < titles.length; i++) {
-			TableColumn column = new TableColumn(table, SWT.NONE);
-			column.setText(titles[i]);
-		}
+		createProjectTableColumns(parent, tableViewer);
 
-		// fill the table contents
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		tableViewer.setInput(allProjects);
+
 		Display display = Display.getCurrent();
 		Color gray = display.getSystemColor(SWT.COLOR_GRAY);
-		for (IProject project : allProjects) {
-			String projectName = project.getName();
-			String disabledReason = getDisabledReason(project);
-
-			TableItem item = new TableItem(table, SWT.NONE);
-			item.setText(0, projectName);
-			if (disabledReason == null) {
-				item.setChecked(preselectedProjects.contains(project));
-				item.setText(1, "-");
-			} else {
-				// disable this row
+		for (TableItem item : table.getItems()) {
+			IProject project = (IProject) item.getData();
+			if (project.isOpen()) {
+				// disable rows of open projects
 				item.setGrayed(true);
 				item.setForeground(gray);
-				item.setText(1, disabledReason);
+			} else {
+				if (preselectedProjects.contains(project)) {
+					item.setChecked(true);
+				}
 			}
 		}
-
-		// disable selection of unselectable rows
 		table.addListener(SWT.Selection, new DisableGrayedItemSelectionListener(table));
+		table.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event evt) {
+				TableItem item = (TableItem)evt.item;
+				if (evt.detail != SWT.CHECK && !((IProject)item.getData()).isOpen()) {
+					item.setChecked(!item.getChecked());
+					updatePageComplete();
+				}
+			}
+		});
 
-		// pack the columns
-		for (int i = 0; i < titles.length; i++) {
-			table.getColumn(i).pack();
-		}
+		tableViewer.setSelection(new StructuredSelection(preselectedProjects));
+
+
+//		// create the table
+//		table = new Table(parent, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+//		table.setLinesVisible(true);
+//		table.setHeaderVisible(true);
+//		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		data.heightHint = 200;
+//		table.setLayoutData(data);
+//
+//		// set the table headers
+//		String[] titles = { Messages.wizard_projectsPage_projectTable_header_projectName, Messages.wizard_projectsPage_projectTable_header_reasonWhyDisabled };
+//		for (int i = 0; i < titles.length; i++) {
+//			TableColumn column = new TableColumn(table, SWT.NONE);
+//			column.setText(titles[i]);
+//		}
+//
+//		// fill the table contents
+//		Display display = Display.getCurrent();
+//		Color gray = display.getSystemColor(SWT.COLOR_GRAY);
+//		for (final IProject project : allProjects) {
+//			String projectName = project.getName();
+//			String disabledReason = getDisabledReason(project);
+//
+//			TableItem item = new TableItem(table, SWT.NONE);
+//			item.setText(0, projectName);
+//			item.setData(project);
+//			if (disabledReason == null) {
+//				item.setChecked(preselectedProjects.contains(project));
+//				item.setText(1, "-");
+//			} else {
+//				// disable this row
+//				item.setGrayed(true);
+//				item.setForeground(gray);
+//				item.setText(1, disabledReason);
+//			}
+//		}
+//
+//		// disable selection of unselectable rows
+//		table.addListener(SWT.Selection, new DisableGrayedItemSelectionListener(table));
+//		table.addListener(SWT.Selection, new Listener() {
+//			@Override
+//			public void handleEvent(Event evt) {
+//				System.out.println("**** handle ****: " + (evt.detail == SWT.CHECK ? "check" : "select"));
+//			}
+//		});
+//
+//		// pack the columns
+//		for (int i = 0; i < titles.length; i++) {
+//			table.getColumn(i).pack();
+//		}
 	}
 
-	private static String getDisabledReason(IProject project) {
-		if (project.isOpen()) {
-			return Messages.wizard_projectsPage_projectTable_itemText_disabledReasonOpen;
-		}
-		return null;
+	private static void createProjectTableColumns(Composite parent, TableViewer tableViewer) {
+		String[] titles = new String[] { Messages.wizard_projectsPage_projectTable_header_projectName, Messages.wizard_projectsPage_projectTable_header_reasonWhyDisabled };
+		int[] bounds = { 150, 200 };
+
+		// the first column shows the project name
+		TableViewerColumn col = createTableViewerColumn(tableViewer, titles[0], bounds[0]);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				IProject project = (IProject) element;
+				return project.getName();
+			}
+		});
+
+		// the second column the disabled reason
+		col = createTableViewerColumn(tableViewer, titles[1], bounds[1]);
+		col.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				IProject project = (IProject) element;
+				if (project.isOpen()) {
+					return Messages.wizard_projectsPage_projectTable_itemText_disabledReasonOpen;
+				}
+				return "-";
+			}
+		});
+}
+
+	private static TableViewerColumn createTableViewerColumn(TableViewer tableViewer, String title, int width) {
+		TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(width);
+		column.setResizable(true);
+		column.setMoveable(true);
+		return viewerColumn;
 	}
 
 	private void createSelectButtons(Composite parent) {
@@ -146,25 +251,24 @@ public class PLUWizardProjectsPage extends WizardPage {
 		Button selAllButton = new Button(comp, SWT.PUSH);
 		selAllButton.setText(Messages.wizard_projectsPage_projectTable_button_selectAll);
 		selAllButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
-		selAllButton.addSelectionListener(new TableSelectAllAdapter(table, true));
+		selAllButton.addSelectionListener(new TableViewerSelectAllAdapter(tableViewer.getTable(), true));
+		selAllButton.addSelectionListener(new PageCompleteSelectAllAdapter(this, true));
 
 		Button deselAllButton = new Button(comp, SWT.PUSH);
 		deselAllButton.setText(Messages.wizard_projectsPage_projectTable_button_deselectAll);
 		deselAllButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
-		deselAllButton.addSelectionListener(new TableSelectAllAdapter(table, false));
+		deselAllButton.addSelectionListener(new TableViewerSelectAllAdapter(tableViewer.getTable(), false));
+		deselAllButton.addSelectionListener(new PageCompleteSelectAllAdapter(this, false));
 
 		comp.pack();
 	}
 
 	public Collection<IProject> getSelectedProjects() {
 		Collection<IProject> result = new ArrayList<IProject>();
-		for (TableItem item : table.getItems()) {
-			if (!item.getChecked()) {
-				continue;
+		for (TableItem item : tableViewer.getTable().getItems()) {
+			if (item.getChecked()) {
+				result.add((IProject) item.getData());
 			}
-			IProject project = (IProject) item.getData();
-			result.add(project);
-			System.out.println("selected: " + project.getName());
 		}
 		return result;
 	}
@@ -196,20 +300,20 @@ public class PLUWizardProjectsPage extends WizardPage {
 			evt.doit = false;
 			try {
 				table.setRedraw(false);
-				item.setChecked(!item.getChecked());
+				item.setChecked(false);
 			} finally {
 				table.setRedraw(true);
 			}
 		}
 	}
 
-	private static class TableSelectAllAdapter extends SelectionAdapter {
+	private static class TableViewerSelectAllAdapter extends SelectionAdapter {
 		private final Table table;
-		private final boolean select;
+		private final boolean checkAllTableItems;
 
-		public TableSelectAllAdapter(Table table, boolean select) {
+		public TableViewerSelectAllAdapter(Table table, boolean checkAllTableItems) {
 			this.table = table;
-			this.select = select;
+			this.checkAllTableItems = checkAllTableItems;
 		}
 
 		@Override
@@ -220,8 +324,23 @@ public class PLUWizardProjectsPage extends WizardPage {
 					continue;
 				}
 
-				item.setChecked(select);
+				item.setChecked(checkAllTableItems);
 			}
+		}
+	}
+
+	private static class PageCompleteSelectAllAdapter extends SelectionAdapter {
+		private final WizardPage wizardPage;
+		private final boolean pageCompleteOnSelect;
+
+		public PageCompleteSelectAllAdapter(WizardPage wizardPage, boolean pageCompleteOnSelect) {
+			this.wizardPage = wizardPage;
+			this.pageCompleteOnSelect = pageCompleteOnSelect;
+		}
+
+		@Override
+		public void widgetSelected(SelectionEvent evt) {
+			wizardPage.setPageComplete(pageCompleteOnSelect);
 		}
 	}
 }

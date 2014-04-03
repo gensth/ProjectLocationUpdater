@@ -16,7 +16,7 @@ public class PLUWizard extends Wizard {
 	private PLUWizardUpdatePage updatePage;
 
 	/** All available projects (input, unmodifiable). */
-	private final IProject[] allProjects;
+	private final Collection<IProject> allProjects;
 	/**
 	 * The reselected projects (input, unmodifiable). All elements must be contained in
 	 * {@link #allProjects}.
@@ -32,7 +32,7 @@ public class PLUWizard extends Wizard {
 	 *            The reselected projects (input, unmodifiable). All elements must be contained in
 	 *            {@link #allProjects}.
 	 */
-	public PLUWizard(IProject[] allProjects, Collection<IProject> preselectedProjects) {
+	public PLUWizard(Collection<IProject> allProjects, Collection<IProject> preselectedProjects) {
 		super();
 		setNeedsProgressMonitor(true);
 
@@ -51,9 +51,11 @@ public class PLUWizard extends Wizard {
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == projectsPage) {
+			return updatePage;
+		}
+		if (page == updatePage) {
 			Collection<IProject> selectedProjects = projectsPage.getSelectedProjects();
 			updatePage.setProjectsToUpdate(selectedProjects);
-			return updatePage;
 		}
 		return null;
 	}
