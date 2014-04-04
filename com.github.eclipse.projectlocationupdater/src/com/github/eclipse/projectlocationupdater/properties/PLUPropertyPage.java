@@ -4,18 +4,21 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -100,16 +103,21 @@ public class PLUPropertyPage extends PropertyPage {
 		Label currentLocationLabel = new Label(composite, SWT.NONE);
 		currentLocationLabel.setText(CURRENT_LOCATION);
 
+		currentLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
+		gd.widthHint = 40;
+		currentLocationText.setLayoutData(gd);
+
+		Display display = Display.getCurrent();
+		Color gray = display.getSystemColor(SWT.COLOR_DARK_GRAY);
+		currentLocationText.setForeground(gray);
+
 		String currentLocation;
 		try {
 			currentLocation = LocationUpdater.readProjectLocation(getMyProject());
 		} catch (IOException e) {
 			currentLocation = ((IResource) getElement()).getProject().getLocation().toString();
 		}
-		currentLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
-		gd.widthHint = 40;
-		currentLocationText.setLayoutData(gd);
 		currentLocationText.setText(currentLocation);
 	}
 
@@ -123,16 +131,25 @@ public class PLUPropertyPage extends PropertyPage {
 		newLocationText.setLayoutData(gd);
 		newLocationText.setText(currentLocationText.getText());
 
-		final String workspaceLocation = ((IResource) getElement()).getWorkspace().getRoot().getLocation().toString();
 		Button browseButton = new Button(composite, SWT.NONE);
 		browseButton.setText(BROWSE_TEXT);
 		browseButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dd = new DirectoryDialog(composite.getShell(), SWT.OPEN);
-				dd.setFilterPath(workspaceLocation);
+
+				String location = newLocationText.getText();
+				if (!location.isEmpty() && new Path(location).toFile().isDirectory()) {
+					dd.setFilterPath(location);
+				} else {
+					String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+					dd.setFilterPath(workspaceLocation);
+				}
+
 				String selected = dd.open();
-				newLocationText.setText(selected);
+				if (selected != null) {
+					newLocationText.setText(selected);
+				}
 			}
 
 			@Override

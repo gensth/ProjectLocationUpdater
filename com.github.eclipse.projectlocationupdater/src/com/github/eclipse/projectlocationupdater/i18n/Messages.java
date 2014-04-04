@@ -9,6 +9,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = Messages.class.getPackage().getName() + ".messages"; //$NON-NLS-1$
 
 	public static String errorDialog_errorOnApplyPrefix;
+	public static String errorDialog_errorReadProjLocPrefix;
 	public static String errorDialog_title;
 	public static String proppage_browse;
 	public static String proppage_currentLocation;
