@@ -55,7 +55,7 @@ public class PLUWizard extends Wizard {
 		}
 		if (page == updatePage) {
 			Collection<IProject> selectedProjects = projectsPage.getSelectedProjects();
-			updatePage.setProjectsToUpdate(selectedProjects);
+//			updatePage.setProjectsToUpdate(selectedProjects);
 		}
 		return null;
 	}
