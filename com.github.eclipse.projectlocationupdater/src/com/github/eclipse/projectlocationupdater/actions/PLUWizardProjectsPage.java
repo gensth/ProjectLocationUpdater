@@ -189,7 +189,7 @@ public class PLUWizardProjectsPage extends WizardPage {
 				if (project.isOpen()) {
 					return Messages.wizard_projectsPage_projectTable_itemText_disabledReasonOpen;
 				}
-				return "-";
+				return "-"; //$NON-NLS-1$
 			}
 		});
 }

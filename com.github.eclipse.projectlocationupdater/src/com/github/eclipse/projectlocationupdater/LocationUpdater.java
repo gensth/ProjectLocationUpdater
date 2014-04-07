@@ -34,7 +34,7 @@ public abstract class LocationUpdater {
     private static final IPath WORKSPACE_PROJECT_SETTINGS_RELPATH = new Path(".metadata/.plugins/org.eclipse.core.resources/.projects"); //$NON-NLS-1$
 
     /** <code>true</code> if we're running on Windows, else <code>false</code>. */
-    private static final boolean OS_IS_WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0;
+    private static final boolean OS_IS_WINDOWS = System.getProperty("os.name").toLowerCase().indexOf("windows") >= 0; //$NON-NLS-1$  //$NON-NLS-2$
 
     private LocationUpdater() {
     	//
@@ -127,8 +127,8 @@ public abstract class LocationUpdater {
 		// Normalize paths
 		previousPrefix.replace('\\', '/');
 		newPrefix.replace('\\', '/');
-		if (previousPrefix.endsWith("/") && !newPrefix.endsWith("/")) {
-			newPrefix = newPrefix + "/";
+		if (previousPrefix.endsWith("/") && !newPrefix.endsWith("/")) { //$NON-NLS-1$ //$NON-NLS-2$
+			newPrefix = newPrefix + "/"; //$NON-NLS-1$
 		}
 
 		// Replace the substring
