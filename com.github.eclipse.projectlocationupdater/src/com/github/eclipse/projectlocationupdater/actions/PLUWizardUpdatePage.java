@@ -6,8 +6,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -15,7 +15,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import com.github.eclipse.projectlocationupdater.i18n.Messages;
@@ -62,6 +64,16 @@ public class PLUWizardUpdatePage extends WizardPage {
 		Display display = Display.getCurrent();
 		Color gray = display.getSystemColor(SWT.COLOR_DARK_GRAY);
 		currentLocationText.setForeground(gray);
+		currentLocationText.addListener(SWT.Traverse, new Listener() {
+			@Override
+			public void handleEvent(Event evt) {
+				if (evt.detail == SWT.TRAVERSE_RETURN) {
+					if (newLocationText.setFocus()) {
+						selectNewLocation();
+					}
+				}
+			}
+		});
 	}
 
 	private void createNewLocation(final Composite composite) {
@@ -78,33 +90,40 @@ public class PLUWizardUpdatePage extends WizardPage {
 				PLUWizardUpdatePage.this.setPageComplete(!newLocationText.getText().isEmpty());
 			}
 		});
+		newLocationText.addListener(SWT.Traverse, new Listener() {
+			@Override
+			public void handleEvent(Event evt) {
+				if (evt.detail == SWT.TRAVERSE_RETURN) {
+					selectNewLocation();
+				}
+			}
+		});
 
 		Button browseButton = new Button(composite, SWT.NONE);
 		browseButton.setText(Messages.proppage_browse);
-		browseButton.addSelectionListener(new SelectionListener() {
+		browseButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(composite.getShell(), SWT.OPEN);
-
-				String location = newLocationText.getText();
-				if (!location.isEmpty() && new Path(location).toFile().isDirectory()) {
-					dd.setFilterPath(location);
-				} else {
-					String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-					dd.setFilterPath(workspaceLocation);
-				}
-
-				String selected = dd.open();
-				if (selected != null) {
-					newLocationText.setText(selected);
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				//
+				selectNewLocation();
 			}
 		});
+	}
+
+	private void selectNewLocation() {
+		DirectoryDialog dd = new DirectoryDialog(getShell(), SWT.OPEN);
+
+		String location = newLocationText.getText();
+		if (!location.isEmpty() && new Path(location).toFile().isDirectory()) {
+			dd.setFilterPath(location);
+		} else {
+			String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+			dd.setFilterPath(workspaceLocation);
+		}
+
+		String selected = dd.open();
+		if (selected != null) {
+			newLocationText.setText(selected);
+		}
 	}
 
 	public void setPreviousPath(String previousPath) {
