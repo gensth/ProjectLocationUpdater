@@ -27,7 +27,7 @@ import com.github.eclipse.projectlocationupdater.LocationUpdater;
  * @author Thomas Calmant
  */
 public class BatchUpdateAction implements IObjectActionDelegate {
-	/** Current selection */
+	/** The current selection */
     private ISelection selection;
 
 	/**

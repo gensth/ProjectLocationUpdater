@@ -28,7 +28,7 @@ import com.github.eclipse.projectlocationupdater.i18n.Messages;
  * @author Max Gensthaler
  */
 public class PLUWizardUpdatePage extends WizardPage {
-	private Text currentLocationText;
+	private Text previousLocationText;
 	private Text newLocationText;
 
 	/**
@@ -46,25 +46,25 @@ public class PLUWizardUpdatePage extends WizardPage {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(3, false));
 
-		createCurrentLocation(comp);
+		createPreviousLocation(comp);
 		createNewLocation(comp);
 
 		setControl(comp);
 	}
 
-	private void createCurrentLocation(Composite composite) {
-		Label currentLocationLabel = new Label(composite, SWT.NONE);
-		currentLocationLabel.setText(Messages.proppage_currentLocation);
+	private void createPreviousLocation(Composite composite) {
+		Label previousLocationLabel = new Label(composite, SWT.NONE);
+		previousLocationLabel.setText(Messages.proppage_previousLocation);
 
-		currentLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+		previousLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 		gd.widthHint = 40;
-		currentLocationText.setLayoutData(gd);
+		previousLocationText.setLayoutData(gd);
 
 		Display display = Display.getCurrent();
 		Color gray = display.getSystemColor(SWT.COLOR_DARK_GRAY);
-		currentLocationText.setForeground(gray);
-		currentLocationText.addListener(SWT.Traverse, new Listener() {
+		previousLocationText.setForeground(gray);
+		previousLocationText.addListener(SWT.Traverse, new Listener() {
 			@Override
 			public void handleEvent(Event evt) {
 				if (evt.detail == SWT.TRAVERSE_RETURN) {
@@ -87,7 +87,7 @@ public class PLUWizardUpdatePage extends WizardPage {
 		newLocationText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent evt) {
-				PLUWizardUpdatePage.this.setPageComplete(!newLocationText.getText().isEmpty());
+				updatePageComplete();
 			}
 		});
 		newLocationText.addListener(SWT.Traverse, new Listener() {
@@ -103,10 +103,18 @@ public class PLUWizardUpdatePage extends WizardPage {
 		browseButton.setText(Messages.proppage_browse);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent evt) {
 				selectNewLocation();
 			}
 		});
+	}
+
+	private void updatePageComplete() {
+		String previousLocation = previousLocationText.getText();
+		assert !previousLocation.isEmpty();
+		String newLocation = newLocationText.getText();
+		boolean newLocationSet = !newLocation.isEmpty() && !newLocation.equals(previousLocation);
+		setPageComplete(newLocationSet);
 	}
 
 	private void selectNewLocation() {
@@ -126,13 +134,19 @@ public class PLUWizardUpdatePage extends WizardPage {
 		}
 	}
 
-	public void setPreviousPath(String previousPath) {
+	public void setPreviousLocation(String previousLocation) {
 		// init the text fields
-		if (currentLocationText != null) {
-			currentLocationText.setText(previousPath);
+		if (previousLocationText != null) {
+			previousLocationText.setText(previousLocation);
 		}
 		if (newLocationText != null) {
-			newLocationText.setText(previousPath);
+			newLocationText.setText(previousLocation);
 		}
+	}
+
+	public String getNewLocation() {
+		String newLocation = newLocationText.getText();
+		assert !newLocation.isEmpty();
+		return newLocation;
 	}
 }

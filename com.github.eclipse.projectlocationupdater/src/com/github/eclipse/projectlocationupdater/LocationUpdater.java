@@ -120,9 +120,9 @@ public abstract class LocationUpdater {
 	 *             Error reading or writing the project location file
 	 */
     public static void updateLocationSubstring(final IProject project, String previousPrefix, String newPrefix) throws IOException {
-		// Read the current location
+		// Read the previous location
         IPath projectLocationFile = getProjectLocationFile(project);
-		final String currentLocation = readProjectLocation(projectLocationFile);
+		final String previousLocation = readProjectLocation(projectLocationFile);
 
 		// Normalize paths
 		previousPrefix.replace('\\', '/');
@@ -132,7 +132,7 @@ public abstract class LocationUpdater {
 		}
 
 		// Replace the substring
-		final String newLocationStr = currentLocation.replace(previousPrefix, newPrefix);
+		final String newLocationStr = previousLocation.replace(previousPrefix, newPrefix);
 
         writeProjectLocation(projectLocationFile.toFile(), new Path(newLocationStr));
 	}
@@ -166,7 +166,7 @@ public abstract class LocationUpdater {
 			// Ignore the begin chunk
 			in.skipBytes(ILocalStoreConstants.BEGIN_CHUNK.length);
 
-			// Get the current project location
+			// Get the previous project location
 			final String projectLocationStr = in.readUTF();
 			assert projectLocationStr.startsWith(URI_PREFIX);
 

@@ -86,9 +86,9 @@ public class PLUWizardAction implements IObjectActionDelegate, IWorkbenchWindowA
 		PLUWizard wizard = new PLUWizard(allProjects, preselectedProjects);
 		WizardDialog wizardDialog = new WizardDialog(shell, wizard);
 		if (wizardDialog.open() == Window.OK) {
-			System.out.println("Ok pressed");
+			// Finish pressed
 		} else {
-			System.out.println("Cancel pressed");
+			// Cancel pressed
 		}
 	}
 

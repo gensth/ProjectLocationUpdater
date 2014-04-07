@@ -97,7 +97,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 
 		// add the page contents
 		createProjectsList(composite);
-		createCurrentLocation(composite);
+		createPreviousLocation(composite);
 		createNewLocation(composite);
 
 		return dialogArea;
@@ -138,16 +138,16 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	 * @param composite
 	 *            Parent composite
 	 */
-	private void createCurrentLocation(final Composite composite) {
-		final Label currentLocationLabel = new Label(composite, SWT.NONE);
-		currentLocationLabel.setText("Common part of locations:");
+	private void createPreviousLocation(final Composite composite) {
+		final Label previousLocationLabel = new Label(composite, SWT.NONE);
+		previousLocationLabel.setText("Common part of locations:");
 
-		final Text currentLocationText = new Text(composite, SWT.SINGLE
+		final Text previousLocationText = new Text(composite, SWT.SINGLE
 				| SWT.READ_ONLY | SWT.BORDER);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 		gd.widthHint = 40;
-		currentLocationText.setLayoutData(gd);
-		currentLocationText.setText(commonPath);
+		previousLocationText.setLayoutData(gd);
+		previousLocationText.setText(commonPath);
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class LocationUpdateDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		// store the field content, while it is not disposed
 		newLocation = newLocationText.getText();
-	
+
 		super.okPressed();
 	}
 

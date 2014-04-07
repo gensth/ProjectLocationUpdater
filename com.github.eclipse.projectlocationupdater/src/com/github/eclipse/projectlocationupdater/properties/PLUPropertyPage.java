@@ -40,15 +40,9 @@ import com.github.eclipse.projectlocationupdater.i18n.Messages;
  */
 @SuppressWarnings("restriction")
 public class PLUPropertyPage extends PropertyPage {
-	private static final String USAGE = Messages.proppage_usage;
-	private static final String CURRENT_LOCATION = Messages.proppage_currentLocation;
-	private static final String NEW_LOCATION = Messages.proppage_newLocation;
-	private static final String BROWSE_TEXT = Messages.proppage_browse;
-	private static final String PROJECT_OPEN_WARNING = Messages.proppage_projectOpenWarning;
-
 	private IProject myProject;
 
-	private Text currentLocationText;
+	private Text previousLocationText;
 	private Text newLocationText;
 
 	public PLUPropertyPage() {
@@ -75,7 +69,7 @@ public class PLUPropertyPage extends PropertyPage {
 			addProjectOpenWarning(composite);
 		}
 		createSeparatorLabel(composite);
-		createCurrentLocation(composite);
+		createPreviousLocation(composite);
 		createNewLocation(composite);
 		return composite;
 	}
@@ -89,50 +83,50 @@ public class PLUPropertyPage extends PropertyPage {
 		Label usageLabel = new Label(composite, SWT.NONE);
 		usageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 		usageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		usageLabel.setText(USAGE);
+		usageLabel.setText(Messages.proppage_usage);
 	}
 
 	private void addProjectOpenWarning(Composite composite) {
 		Label warningLabel = new Label(composite, SWT.NONE);
 		warningLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 		// warningLabel.setImage(JFaceResources.getImageRegistry().getDescriptor("org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING").createImage());
-		warningLabel.setText(PROJECT_OPEN_WARNING);
+		warningLabel.setText(Messages.proppage_projectOpenWarning);
 	}
 
-	private void createCurrentLocation(Composite composite) {
-		Label currentLocationLabel = new Label(composite, SWT.NONE);
-		currentLocationLabel.setText(CURRENT_LOCATION);
+	private void createPreviousLocation(Composite composite) {
+		Label previousLocationLabel = new Label(composite, SWT.NONE);
+		previousLocationLabel.setText(Messages.proppage_previousLocation);
 
-		currentLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+		previousLocationText = new Text(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 		gd.widthHint = 40;
-		currentLocationText.setLayoutData(gd);
+		previousLocationText.setLayoutData(gd);
 
 		Display display = Display.getCurrent();
 		Color gray = display.getSystemColor(SWT.COLOR_DARK_GRAY);
-		currentLocationText.setForeground(gray);
+		previousLocationText.setForeground(gray);
 
-		String currentLocation;
+		String previousLocation;
 		try {
-			currentLocation = LocationUpdater.readProjectLocation(getMyProject());
+			previousLocation = LocationUpdater.readProjectLocation(getMyProject());
 		} catch (IOException e) {
-			currentLocation = ((IResource) getElement()).getProject().getLocation().toString();
+			previousLocation = ((IResource) getElement()).getProject().getLocation().toString();
 		}
-		currentLocationText.setText(currentLocation);
+		previousLocationText.setText(previousLocation);
 	}
 
 	private void createNewLocation(final Composite composite) {
 		Label newLocationLabel = new Label(composite, SWT.NONE);
-		newLocationLabel.setText(NEW_LOCATION);
+		newLocationLabel.setText(Messages.proppage_newLocation);
 
 		newLocationText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd.widthHint = 40;
 		newLocationText.setLayoutData(gd);
-		newLocationText.setText(currentLocationText.getText());
+		newLocationText.setText(previousLocationText.getText());
 
 		Button browseButton = new Button(composite, SWT.NONE);
-		browseButton.setText(BROWSE_TEXT);
+		browseButton.setText(Messages.proppage_browse);
 		browseButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -162,14 +156,14 @@ public class PLUPropertyPage extends PropertyPage {
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
-		newLocationText.setText(currentLocationText.getText());
+		newLocationText.setText(previousLocationText.getText());
 	}
 
 	@Override
 	public boolean performOk() {
-		Path currentLocationPath = new Path(currentLocationText.getText());
+		Path previousLocationPath = new Path(previousLocationText.getText());
 		Path newLocationPath = new Path(newLocationText.getText());
-		if (newLocationPath.equals(currentLocationPath)) {
+		if (newLocationPath.equals(previousLocationPath)) {
 			// nothing to do, nothing changed
 		} else {
 			try {

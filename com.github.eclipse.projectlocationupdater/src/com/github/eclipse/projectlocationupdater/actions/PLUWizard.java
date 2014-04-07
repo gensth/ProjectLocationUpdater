@@ -31,6 +31,8 @@ public class PLUWizard extends Wizard {
 	 * {@link #allProjects}.
 	 */
 	private final Collection<IProject> preselectedProjects;
+	private Collection<IProject> selectedProjects;
+	private String previousLocation;
 
 	/**
 	 * Creates a new instance of this class.
@@ -60,9 +62,9 @@ public class PLUWizard extends Wizard {
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == projectsPage) {
-			Collection<IProject> selectedProjects = projectsPage.getSelectedProjects();
-			String pathToUpdate = getPathToUpdate(selectedProjects);
-			updatePage.setPreviousPath(pathToUpdate);
+			selectedProjects = projectsPage.getSelectedProjects();
+			previousLocation = getPathToUpdate(selectedProjects);
+			updatePage.setPreviousLocation(previousLocation);
 			return updatePage;
 		}
 		return null;
@@ -70,8 +72,19 @@ public class PLUWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		// TODO implement
-		return false;
+		updateProjects(selectedProjects, previousLocation, updatePage.getNewLocation());
+		return true;
+	}
+
+	private void updateProjects(Collection<IProject> projects, String previousLocation, String newLocation) {
+		for (IProject project : projects) {
+			try {
+				LocationUpdater.updateLocationSubstring(project, previousLocation, newLocation);
+			} catch (IOException e) {
+				MessageDialog.openError(getShell(), Messages.errorDialog_title, Messages.errorDialog_errorOnApplyPrefix + e.getMessage());
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

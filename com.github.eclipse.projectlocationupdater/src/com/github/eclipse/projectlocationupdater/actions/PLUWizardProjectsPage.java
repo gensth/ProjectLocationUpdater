@@ -163,55 +163,6 @@ public class PLUWizardProjectsPage extends WizardPage {
 		tableViewer.setSelection(new StructuredSelection(preselectedProjects));
 
 
-//		// create the table
-//		table = new Table(parent, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-//		table.setLinesVisible(true);
-//		table.setHeaderVisible(true);
-//		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-//		data.heightHint = 200;
-//		table.setLayoutData(data);
-//
-//		// set the table headers
-//		String[] titles = { Messages.wizard_projectsPage_projectTable_header_projectName, Messages.wizard_projectsPage_projectTable_header_reasonWhyDisabled };
-//		for (int i = 0; i < titles.length; i++) {
-//			TableColumn column = new TableColumn(table, SWT.NONE);
-//			column.setText(titles[i]);
-//		}
-//
-//		// fill the table contents
-//		Display display = Display.getCurrent();
-//		Color gray = display.getSystemColor(SWT.COLOR_GRAY);
-//		for (final IProject project : allProjects) {
-//			String projectName = project.getName();
-//			String disabledReason = getDisabledReason(project);
-//
-//			TableItem item = new TableItem(table, SWT.NONE);
-//			item.setText(0, projectName);
-//			item.setData(project);
-//			if (disabledReason == null) {
-//				item.setChecked(preselectedProjects.contains(project));
-//				item.setText(1, "-");
-//			} else {
-//				// disable this row
-//				item.setGrayed(true);
-//				item.setForeground(gray);
-//				item.setText(1, disabledReason);
-//			}
-//		}
-//
-//		// disable selection of unselectable rows
-//		table.addListener(SWT.Selection, new DisableGrayedItemSelectionListener(table));
-//		table.addListener(SWT.Selection, new Listener() {
-//			@Override
-//			public void handleEvent(Event evt) {
-//				System.out.println("**** handle ****: " + (evt.detail == SWT.CHECK ? "check" : "select"));
-//			}
-//		});
-//
-//		// pack the columns
-//		for (int i = 0; i < titles.length; i++) {
-//			table.getColumn(i).pack();
-//		}
 	}
 
 	private static void createProjectTableColumns(Composite parent, TableViewer tableViewer) {
@@ -267,16 +218,6 @@ public class PLUWizardProjectsPage extends WizardPage {
 			}
 		});
 		selAllButton.addSelectionListener(new PageCompleteSelectAllAdapter(this, true));
-//		getShell().addKeyListener(new KeyAdapter() {
-//			@Override
-//			public void keyPressed(KeyEvent evt) {
-//				if ((evt.stateMask & SWT.ALT) != 0) {
-//					if(evt.keyCode >=97 && evt.keyCode <=122) {
-//						System.out.println(evt.keyCode);
-//					}
-//				}
-//			}
-//		});
 
 		Button deselAllButton = new Button(comp, SWT.PUSH);
 		deselAllButton.setText(Messages.wizard_projectsPage_projectTable_button_deselectAll);

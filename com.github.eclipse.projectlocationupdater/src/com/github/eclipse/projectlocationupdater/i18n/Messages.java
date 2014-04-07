@@ -12,7 +12,7 @@ public class Messages extends NLS {
 	public static String errorDialog_errorReadProjLocPrefix;
 	public static String errorDialog_title;
 	public static String proppage_browse;
-	public static String proppage_currentLocation;
+	public static String proppage_previousLocation;
 	public static String proppage_newLocation;
 	public static String proppage_projectOpenWarning;
 	public static String proppage_usage;
