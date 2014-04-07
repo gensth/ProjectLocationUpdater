@@ -143,8 +143,9 @@ public class PLUWizardProjectsPage extends WizardPage {
 		table.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event evt) {
-				// only selection events
 				if (evt.detail == SWT.CHECK) {
+					updatePageComplete();
+					// only selection events
 					return;
 				}
 
