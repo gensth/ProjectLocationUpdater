@@ -143,8 +143,17 @@ public class PLUWizardProjectsPage extends WizardPage {
 		table.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event evt) {
-				TableItem item = (TableItem)evt.item;
-				if (evt.detail != SWT.CHECK && !((IProject)item.getData()).isOpen()) {
+				// only selection events
+				if (evt.detail == SWT.CHECK) {
+					return;
+				}
+
+				TableItem item = (TableItem) evt.item;
+				if (item == null) {
+					// likely CMD+A/STRG+A was pressed
+					selectAll(true);
+					updatePageComplete();
+				} else if (!((IProject) item.getData()).isOpen()) {
 					item.setChecked(!item.getChecked());
 					updatePageComplete();
 				}
@@ -251,16 +260,48 @@ public class PLUWizardProjectsPage extends WizardPage {
 		Button selAllButton = new Button(comp, SWT.PUSH);
 		selAllButton.setText(Messages.wizard_projectsPage_projectTable_button_selectAll);
 		selAllButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
-		selAllButton.addSelectionListener(new TableViewerSelectAllAdapter(tableViewer.getTable(), true));
+		selAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectAll(true);
+			}
+		});
 		selAllButton.addSelectionListener(new PageCompleteSelectAllAdapter(this, true));
+//		getShell().addKeyListener(new KeyAdapter() {
+//			@Override
+//			public void keyPressed(KeyEvent evt) {
+//				if ((evt.stateMask & SWT.ALT) != 0) {
+//					if(evt.keyCode >=97 && evt.keyCode <=122) {
+//						System.out.println(evt.keyCode);
+//					}
+//				}
+//			}
+//		});
 
 		Button deselAllButton = new Button(comp, SWT.PUSH);
 		deselAllButton.setText(Messages.wizard_projectsPage_projectTable_button_deselectAll);
 		deselAllButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
-		deselAllButton.addSelectionListener(new TableViewerSelectAllAdapter(tableViewer.getTable(), false));
+		deselAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectAll(false);
+			}
+		});
 		deselAllButton.addSelectionListener(new PageCompleteSelectAllAdapter(this, false));
 
+
 		comp.pack();
+	}
+
+	private void selectAll(boolean checkAllTableItems) {
+		for (TableItem item : tableViewer.getTable().getItems()) {
+			// ignore disabled rows
+			if (item.getGrayed()) {
+				continue;
+			}
+
+			item.setChecked(checkAllTableItems);
+		}
 	}
 
 	public Collection<IProject> getSelectedProjects() {
@@ -303,28 +344,6 @@ public class PLUWizardProjectsPage extends WizardPage {
 				item.setChecked(false);
 			} finally {
 				table.setRedraw(true);
-			}
-		}
-	}
-
-	private static class TableViewerSelectAllAdapter extends SelectionAdapter {
-		private final Table table;
-		private final boolean checkAllTableItems;
-
-		public TableViewerSelectAllAdapter(Table table, boolean checkAllTableItems) {
-			this.table = table;
-			this.checkAllTableItems = checkAllTableItems;
-		}
-
-		@Override
-		public void widgetSelected(SelectionEvent evt) {
-			for (TableItem item : table.getItems()) {
-				// ignore disabled rows
-				if (item.getGrayed()) {
-					continue;
-				}
-
-				item.setChecked(checkAllTableItems);
 			}
 		}
 	}
