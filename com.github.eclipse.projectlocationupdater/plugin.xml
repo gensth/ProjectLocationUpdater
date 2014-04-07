@@ -14,15 +14,6 @@
             adaptable="true"
             nameFilter="*"
             objectClass="org.eclipse.core.resources.IProject">
-<!--
-         <action id="com.github.eclipse.projectlocationupdater.actions.batchUpdate"
-               menubarPath="additions"
-               label="Update Project Location(s)"
-               tooltip="Update the project location(s) to a new path in the file system."
-               class="com.github.eclipse.projectlocationupdater.actions.BatchUpdateAction"
-               enablesFor="*">
-         </action>
- -->
          <action id="com.github.eclipse.projectlocationupdater.actions.popupMenus.wizard"
                menubarPath="additions"
                label="Update Project Location(s)"
