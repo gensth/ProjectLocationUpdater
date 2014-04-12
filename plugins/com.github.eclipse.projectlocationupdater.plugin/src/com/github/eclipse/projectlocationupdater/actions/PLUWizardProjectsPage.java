@@ -143,19 +143,18 @@ public class PLUWizardProjectsPage extends WizardPage {
 		table.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event evt) {
-				if (evt.detail == SWT.CHECK) {
-					updatePageComplete();
-					// only selection events
-					return;
-				}
-
 				TableItem item = (TableItem) evt.item;
 				if (item == null) {
 					// likely CMD+A/STRG+A was pressed
 					selectAll(true);
 					updatePageComplete();
-				} else if (!((IProject) item.getData()).isOpen()) {
-					item.setChecked(!item.getChecked());
+				} else if (item.getGrayed()) {
+					// this row is disabled
+				} else {
+					if (evt.detail != SWT.CHECK) {
+						// if row was selected (not the checkbox checked)
+						item.setChecked(!item.getChecked());
+					}
 					updatePageComplete();
 				}
 			}
