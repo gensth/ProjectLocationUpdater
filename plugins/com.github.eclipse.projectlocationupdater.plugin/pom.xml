@@ -8,7 +8,6 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<groupId>com.github.eclipse.projectlocationupdater</groupId>
 	<artifactId>com.github.eclipse.projectlocationupdater.plugin</artifactId>
 	<packaging>eclipse-plugin</packaging>
 </project>
