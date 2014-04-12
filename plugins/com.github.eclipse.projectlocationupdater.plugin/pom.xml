@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.eclipse.projectlocationupdater</groupId>
+		<artifactId>com.github.eclipse.projectlocationupdater.parent</artifactId>
+		<version>1.0.3-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<groupId>com.github.eclipse.projectlocationupdater</groupId>
+	<artifactId>com.github.eclipse.projectlocationupdater.plugin</artifactId>
+	<packaging>eclipse-plugin</packaging>
+</project>

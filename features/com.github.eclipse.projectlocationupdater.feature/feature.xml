@@ -2,7 +2,7 @@
 <feature
       id="com.github.eclipse.projectlocationupdater.feature"
       label="ProjectLocationUpdater"
-      version="1.0.2">
+      version="1.0.3.qualifier">
 
    <description url="https://github.com/gensth/ProjectLocationUpdater">
       This plugin adds a property page to update the project location by editing the &apos;.location&apos; file in your workspace.
@@ -113,7 +113,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <plugin
-         id="com.github.eclipse.projectlocationupdater"
+         id="com.github.eclipse.projectlocationupdater.plugin"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ProjectLocationUpdater
-Bundle-SymbolicName: com.github.eclipse.projectlocationupdater;singleton:=true
-Bundle-Version: 1.0.2
+Bundle-SymbolicName: com.github.eclipse.projectlocationupdater.plugin;singleton:=true
+Bundle-Version: 1.0.3.qualifier
 Bundle-Activator: com.github.eclipse.projectlocationupdater.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

@@ -1,7 +1,3 @@
-com.github.eclipse.projectlocationupdater.updatesite/artifacts.jar
-com.github.eclipse.projectlocationupdater.updatesite/content.jar
-com.github.eclipse.projectlocationupdater.updatesite/features/
-com.github.eclipse.projectlocationupdater.updatesite/index.html
-com.github.eclipse.projectlocationupdater.updatesite/plugins/
-com.github.eclipse.projectlocationupdater.updatesite/web/
-com.github.eclipse.projectlocationupdater/bin/
+plugins/com.github.eclipse.projectlocationupdater.plugin/bin/
+plugins/com.github.eclipse.projectlocationupdater.plugin/target/
+features/com.github.eclipse.projectlocationupdater.feature/target/
