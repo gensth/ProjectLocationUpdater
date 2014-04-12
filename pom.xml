@@ -102,6 +102,6 @@
 		<module>features/com.github.eclipse.projectlocationupdater.feature</module>
 		<!-- <module>com.github.eclipse.projectlocationupdater.tests</module> -->
 
-		<!-- <module>update-site</module> -->
+		<module>update-site</module>
 	</modules>
 </project>
