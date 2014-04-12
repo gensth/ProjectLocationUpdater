@@ -1,3 +1,6 @@
-plugins/com.github.eclipse.projectlocationupdater.plugin/bin/
-plugins/com.github.eclipse.projectlocationupdater.plugin/target/
-features/com.github.eclipse.projectlocationupdater.feature/target/
+.project
+.settings/
+.classpath
+/plugins/com.github.eclipse.projectlocationupdater.plugin/target/
+/features/com.github.eclipse.projectlocationupdater.feature/target/
+/update-site/target/
