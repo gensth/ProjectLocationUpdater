@@ -1,3 +1,5 @@
+[![Build Status](https://drone.io/github.com/gensth/ProjectLocationUpdater/status.png)](https://drone.io/github.com/gensth/ProjectLocationUpdater/latest)
+
 # ProjectLocationUpdater
 
 This Eclipse plugin adds a property page to update the project location by editing the `.location` file in your workspace.
