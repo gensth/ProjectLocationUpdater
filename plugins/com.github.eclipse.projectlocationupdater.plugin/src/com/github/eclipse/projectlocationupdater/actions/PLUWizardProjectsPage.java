@@ -40,6 +40,7 @@ import com.github.eclipse.projectlocationupdater.utils.Predicate;
  * @author Max Gensthaler
  */
 public class PLUWizardProjectsPage extends WizardPage {
+	private static boolean IS_LINUX = (System.getProperty("os.name", "generic").toLowerCase().indexOf("nux") >= 0);
 	private static final Comparator<IProject> PROJECT_NAME_COMPARATOR = new Comparator<IProject>() {
 		@Override
 		public int compare(IProject a, IProject b) {
@@ -151,8 +152,9 @@ public class PLUWizardProjectsPage extends WizardPage {
 				} else if (item.getGrayed()) {
 					// this row is disabled
 				} else {
-					if (evt.detail != SWT.CHECK) {
+					if (evt.detail != SWT.CHECK && !IS_LINUX) {
 						// if row was selected (not the checkbox checked)
+						// this does not work on Linux, because the row label seems to overlap the checkbox
 						item.setChecked(!item.getChecked());
 					}
 					updatePageComplete();
