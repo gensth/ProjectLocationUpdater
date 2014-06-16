@@ -1,3 +1,4 @@
+1.1.0 rewrite of the core renaming component, added multi project renaming, minor bugfixes
 1.0.2 bugfixes: fixes ArrayIndexOutOfBoundsException when updating project, JRE1.6 compatibility, property page layout
 1.0.1 bugfixes: updating location of project which references to other projects (credits to michud), compiler version
 1.0.0 initial release
