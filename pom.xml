@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.eclipse.projectlocationupdater</groupId>
 	<artifactId>com.github.eclipse.projectlocationupdater.parent</artifactId>
-	<version>1.1.0</version>
+	<version>1.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
