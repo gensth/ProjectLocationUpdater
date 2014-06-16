@@ -97,6 +97,11 @@
 					</configuration>
  -->
 				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-versions-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -105,7 +110,6 @@
 		<module>plugins/com.github.eclipse.projectlocationupdater.plugin</module>
 		<module>features/com.github.eclipse.projectlocationupdater.feature</module>
 		<!-- <module>com.github.eclipse.projectlocationupdater.tests</module> -->
-
 		<module>update-site</module>
 	</modules>
 </project>
