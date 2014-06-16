@@ -24,13 +24,13 @@ Install from
 ## Usage
 
 * Open the properties of the closed project.
-* Select `Resource Location Updater` page.
+* Select `Project Location Updater` page.
 * Update the project location path.
 * Reopen the project to apply the changes.
 
 ## Screenshot
 
-![screenshot](https://raw.github.com/gensth/ProjectLocationUpdater/master/ProjectLocationUpdater_screenshot.png "preference page of ProjectLocationUpdater")
+![screenshot](https://raw.github.com/gensth/ProjectLocationUpdater/master/ProjectLocationUpdater_screenshot.png "ProjectLocationUpdater")
 
 ## License
 
