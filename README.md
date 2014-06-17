@@ -25,8 +25,8 @@ Install from
 
 ## Usage
 
-* Select one or multiple closed projects
-* Do one of the following
+* Select one or multiple closed projects.
+* Do one of the following:
   * Menu "Project" -> "Update Project Location(s)"
   * Context menu -> "Update Project Location(s)"
   * Context menu -> "Properties" -> "Project Location Updater"
@@ -52,8 +52,7 @@ git push origin master
 
 mvn clean verify
 # will generate a full update site containing the new plugin
-# in update-site/target/repository/
-# deploy this directory to your web server
+# in update-site/target/repository/ ready to be deployed
 
 mvn tycho-versions:set-version -DnewVersion=1.2.0-SNAPSHOT
 git commit -m "increase version to 1.2.0-SNAPSHOT" -a
@@ -61,7 +60,8 @@ git commit -m "increase version to 1.2.0-SNAPSHOT" -a
 
 ## License
 
-ProjectLocationUpdater is released under the Eclipse Public License 1.0. http://www.eclipse.org/legal/epl-v10.html
+ProjectLocationUpdater is released under the Eclipse Public License 1.0.  
+http://www.eclipse.org/legal/epl-v10.html
 
 ## Related websites
 
