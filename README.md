@@ -32,6 +32,28 @@ Install from
 
 ![screenshot](https://raw.github.com/gensth/ProjectLocationUpdater/master/ProjectLocationUpdater_screenshot.png "ProjectLocationUpdater")
 
+## Building and Releasing
+
+This project builds with `mvn clean verify` which compiles and puts the latest SNAPSHOT to the update site in `update-site/target/repository`.
+
+To create a new release and publish it using the update-site follow these steps:
+
+```
+mvn tycho-versions:set-version -DnewVersion=1.1.0
+git commit -m "release 1.1.0" -a
+git tag release-1.1.0
+git push origin release-1.1.0
+git push origin master
+
+mvn clean verify
+# will generate a full update site containing the new plugin
+# in update-site/target/repository/
+# deploy this directory to your web server
+
+mvn tycho-versions:set-version -DnewVersion=1.2.0-SNAPSHOT
+git commit -m "increase version to 1.2.0-SNAPSHOT" -a
+```
+
 ## License
 
 ProjectLocationUpdater is released under the Eclipse Public License 1.0. http://www.eclipse.org/legal/epl-v10.html
