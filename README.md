@@ -50,12 +50,11 @@ git tag release-1.1.0
 git push origin release-1.1.0
 git push origin master
 
-mvn clean verify
-# will generate a full update site containing the new plugin
+# install the parent pom
+mvn install -N -q
+# generate a full update site containing the new plugin
 # in update-site/target/repository/ ready to be deployed
-
-mvn tycho-versions:set-version -DnewVersion=1.2.0-SNAPSHOT
-git commit -m "increase version to 1.2.0-SNAPSHOT" -a
+mvn clean verify
 ```
 
 ## License
