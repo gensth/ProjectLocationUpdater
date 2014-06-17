@@ -2,18 +2,20 @@
 
 # ProjectLocationUpdater
 
-This Eclipse plugin adds a property page to update the project location by editing the `.location` file in your workspace.
+This Eclipse plugin adds a wizard and a property page to update the project location by editing the `.location` file in your workspace.
 
 ## Use case
 
-Correct the locations for projects moved in the file system without using the Eclipse refactoring `move` tool.
-Alternatively such projects could be deleted and reimported into the workspace. During this process some other project settings are altered which may not be intended.
+Correct the locations of projects which were moved in the file system without using the Eclipse refactoring `move` tool. (Alternatively such projects could be deleted and reimported into the workspace. During this process some other project settings are altered which may not be intended.)
+
+The ProjectLocationUpdater also allows to set the path to a project using symlinks without resolving before storing them. (When using the Eclipse import wizard all symlinks would be resolved.)
 
 ## Background
 
 Some projects depend on external build tools. In consequence they require the workspace configuration separated from the project files.
 If such a project has been imported into the workspace and is not located in a subfolder of the workspace, the project locations are stored in the runtime data as absolute path. There is no built in mechanism to change that path.
-This property page addresses this issue and allows you to change the location path of the closed project.
+
+The ProjectLocationUpdater addresses this issue and allows you to change the location path of the closed project.
 
 ## Installation
 
@@ -23,9 +25,12 @@ Install from
 
 ## Usage
 
-* Open the properties of the closed project.
-* Select `Project Location Updater` page.
-* Update the project location path.
+* Select one or multiple closed projects
+* Do one of the following
+  * Menu "Project" -> "Update Project Location(s)"
+  * Context menu -> "Update Project Location(s)"
+  * Context menu -> "Properties" -> "Project Location Updater"
+* Update the project location path of the selected project or the common path of multiple selected projects.
 * Reopen the project to apply the changes.
 
 ## Screenshot
