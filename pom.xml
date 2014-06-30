@@ -20,21 +20,24 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <platform-version-name>kepler</platform-version-name>
         <tycho.version>0.20.0</tycho.version>
         <tycho-extras.version>${tycho.version}</tycho-extras.version>
+        <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
     </properties>
 
     <repositories>
         <repository>
-            <id>kepler</id>
-            <url>http://download.eclipse.org/releases/kepler</url>
+            <id>eclipse-platform</id>
             <layout>p2</layout>
+            <url>${eclipse-site}</url>
         </repository>
     </repositories>
 
     <build>
         <defaultGoal>verify</defaultGoal>
         <sourceDirectory>src</sourceDirectory>
+
         <plugins>
             <plugin>
                 <!-- enable tycho build extension -->
@@ -83,6 +86,16 @@
 
         <pluginManagement>
             <plugins>
+<!--
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-compiler-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+-->
                 <plugin>
                     <groupId>org.eclipse.tycho</groupId>
                     <artifactId>tycho-packaging-plugin</artifactId>
@@ -112,4 +125,72 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>platform-helios</id>
+            <activation>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>helios</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/helios</eclipse-site>
+                <platform-version>[3.6,3.7)</platform-version>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-indigo</id>
+            <activation>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>indigo</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/indigo</eclipse-site>
+                <platform-version>[3.7,3.8)</platform-version>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-juno</id>
+            <activation>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>juno</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/juno</eclipse-site>
+                <platform-version>[3.8,4.3)</platform-version>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-kepler</id>
+            <activation>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>kepler</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/kepler</eclipse-site>
+                <platform-version>[4.3,4.4)</platform-version>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-luna</id>
+            <activation>
+                <property>
+                    <name>platform-version-name</name>
+                    <value>luna</value>
+                </property>
+            </activation>
+            <properties>
+                <eclipse-site>http://download.eclipse.org/releases/luna</eclipse-site>
+                <platform-version>[4.4,4.5)</platform-version>
+            </properties>
+        </profile>
+    </profiles>
 </project>
