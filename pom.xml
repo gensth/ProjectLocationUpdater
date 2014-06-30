@@ -10,6 +10,13 @@
     <version>1.1.0</version>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>plugins/com.github.eclipse.projectlocationupdater.plugin</module>
+        <module>features/com.github.eclipse.projectlocationupdater.feature</module>
+        <!-- <module>com.github.eclipse.projectlocationupdater.tests</module> -->
+        <module>update-site</module>
+    </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -105,11 +112,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <modules>
-        <module>plugins/com.github.eclipse.projectlocationupdater.plugin</module>
-        <module>features/com.github.eclipse.projectlocationupdater.feature</module>
-        <!-- <module>com.github.eclipse.projectlocationupdater.tests</module> -->
-        <module>update-site</module>
-    </modules>
 </project>
