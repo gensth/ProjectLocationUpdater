@@ -22,6 +22,7 @@ The ProjectLocationUpdater addresses this issue and allows you to change the loc
 Install from
 * the Eclipse Marketplace: http://marketplace.eclipse.org/node/539811
 * or from the update site: http://www.gensthaler.de/eclipse/
+* or drag this image [![Install](http://marketplace.eclipse.org/sites/all/modules/custom/marketplace/images/installbutton.png)](http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=539811) to your running Eclipse workspace.
 
 ## Usage
 
