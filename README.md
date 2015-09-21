@@ -1,4 +1,4 @@
-[![Build Status](https://drone.io/github.com/gensth/ProjectLocationUpdater/status.png)](https://drone.io/github.com/gensth/ProjectLocationUpdater/latest)
+[![Build Status](https://drone.io/github.com/gensth/ProjectLocationUpdater/status.png)](https://drone.io/github.com/gensth/ProjectLocationUpdater/latest) [![GitHub issues](https://img.shields.io/github/issues/gensth/ProjectLocationUpdater.svg)](https://github.com/gensth/ProjectLocationUpdater/issues) [![GitHub forks](https://img.shields.io/github/forks/gensth/ProjectLocationUpdater.svg)](https://github.com/gensth/ProjectLocationUpdater/network) [![GitHub stars](https://img.shields.io/github/stars/gensth/ProjectLocationUpdater.svg)](https://github.com/gensth/ProjectLocationUpdater/stargazers)
 
 # ProjectLocationUpdater
 
